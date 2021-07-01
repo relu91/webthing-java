@@ -13,13 +13,13 @@ import org.json.JSONObject;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import io.webthings.webthing.errors.PropertyError;
+import java.util.TreeMap;
+import java.util.TreeSet;
 
 /**
  * A Web Thing.
@@ -74,12 +74,12 @@ public class Thing {
         this.context = "https://webthings.io/schemas";
         this.type = type;
         this.description = description;
-        this.properties = new HashMap<>();
-        this.availableActions = new HashMap<>();
-        this.availableEvents = new HashMap<>();
-        this.actions = new HashMap<>();
+        this.properties = new TreeMap<>();
+        this.availableActions = new TreeMap<>();
+        this.availableEvents = new TreeMap<>();
+        this.actions = new TreeMap<>();
         this.events = new ArrayList<>();
-        this.subscribers = new HashSet<>();
+        this.subscribers = new TreeSet<>();
         this.hrefPrefix = "";
         this.uiHref = null;
     }
@@ -640,7 +640,7 @@ public class Thing {
          */
         public AvailableEvent(JSONObject metadata) {
             this.metadata = metadata;
-            this.subscribers = new HashSet<>();
+            this.subscribers = new TreeSet<>();
         }
 
         /**

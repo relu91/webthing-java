@@ -9,16 +9,16 @@ import org.json.JSONObject;
 /**
  * An Action represents an individual action on a thing.
  */
-public class Action {
-    private final String id;
-    private final Thing thing;
-    private final String name;
-    private final JSONObject input;
-    private String hrefPrefix;
-    private final String href;
-    private String status;
-    private final String timeRequested;
-    private String timeCompleted;
+public abstract class Action {
+    private final String        id;
+    private final Thing         thing;
+    private final String        name;
+    private final JSONObject    input;
+    private String              hrefPrefix;
+    private final String        href;
+    private String              status;
+    private final String        timeRequested;
+    private String              timeCompleted;
 
     /**
      * Initialize the object.
@@ -172,14 +172,14 @@ public class Action {
     /**
      * Override this with the code necessary to perform the action.
      */
-    public void performAction() {
-    }
+    public abstract void performAction();
+    
 
     /**
      * Override this with the code necessary to cancel the action.
      */
-    public void cancel() {
-    }
+    public abstract  void cancel();
+    
 
     /**
      * Finish performing the action.
