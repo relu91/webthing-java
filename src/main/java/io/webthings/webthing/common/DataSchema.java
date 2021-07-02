@@ -6,7 +6,13 @@
 package io.webthings.webthing.common;
 
 import io.webthings.webthing.JSONEntity;
-import io.webthings.webthing.forms.Form;
+import static io.webthings.webthing.common.JSONEntityHelpers.addCollection;
+import static io.webthings.webthing.common.JSONEntityHelpers.addJSONEntityCollection;
+import static io.webthings.webthing.common.JSONEntityHelpers.addObject;
+import static io.webthings.webthing.common.JSONEntityHelpers.addSingleItemOrList;
+import static io.webthings.webthing.common.JSONEntityHelpers.addString;
+import static io.webthings.webthing.common.JSONEntityHelpers.checkedInitList;
+import io.webthings.webthing.exceptions.WoTException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -183,6 +189,22 @@ public class DataSchema extends JSONEntity {
         addObject("writeOnly", __writeOnly, ret);
         addString("format", __format, ret);
         return ret;
+    }
+
+    @Override
+    public JSONEntity fromJSON(JSONObject o) throws WoTException {
+        __title = JSONEntityHelpers.readObject(o, "title", String.class);
+        __titles = JSONEntityHelpers.readCollection(o, "titles", String.class,TreeMap.class);
+        __description = JSONEntityHelpers.readObject(o, "description", String.class);
+        __descriptions = JSONEntityHelpers.readCollection(o, "descriptions", String.class,TreeMap.class);
+        __types = JSONEntityHelpers.readObjectSingleOrList(o, "@type", String.class, ArrayList.class);
+        __jsonType = JSONEntityHelpers.readObject(o, "type", String.class);
+        __const = JSONEntityHelpers.readObject(o, "const", Object.class);
+        __unit = JSONEntityHelpers.readObject(o, "unit", String.class);
+        __enum = JSONEntityHelpers.readCollection(o, "enum", Object.class,ArrayList.class);
+        __oneOf = JSONEntityHelpers.readEntityCollection(o, "oneOf", DataSchema.class, ArrayList.class);
+        
+        return this;
     }
 
     

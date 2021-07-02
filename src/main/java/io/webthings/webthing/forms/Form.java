@@ -6,6 +6,12 @@
 package io.webthings.webthing.forms;
 
 import io.webthings.webthing.JSONEntity;
+import io.webthings.webthing.common.JSONEntityHelpers;
+import static io.webthings.webthing.common.JSONEntityHelpers.addJSONEntity;
+import static io.webthings.webthing.common.JSONEntityHelpers.addRequiredString;
+import static io.webthings.webthing.common.JSONEntityHelpers.addSingleItemOrList;
+import static io.webthings.webthing.common.JSONEntityHelpers.addString;
+import static io.webthings.webthing.common.JSONEntityHelpers.checkedInitSet;
 import io.webthings.webthing.exceptions.WoTException;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +31,7 @@ public class Form extends JSONEntity{
     private String              __subprotocol;
     private Set<String>        __security;
     private Set<String>        __scopes;
-    private ExpectedResponse    __response;
+    private ExpectedResponse   __response;
     
     //some conveniency constructors
     public Form() {
@@ -53,27 +59,6 @@ public class Form extends JSONEntity{
         
     }
     
-    @Override
-    public JSONObject asJSON() throws WoTException{
-        final JSONObject o = new JSONObject();
-        if (__ops != null) {
-            final List<String> opList = new ArrayList<>();
-            for(Operation.id op : __ops) {
-                opList.add(Operation.decodeId(op));
-            }
-            addSingleItemOrList("op", opList, o);
-        }
-        
-        addRequiredString("href", __href, o);
-        addString("contentType",__contentType,o);
-        addString("contentCoding",__contentCoding,o);
-        addString("subprotocol",__subprotocol,o);
-        addSingleItemOrList("security", __security, o);
-        addSingleItemOrList("scopes", __scopes, o);
-        addJSONEntity("response", __response, o);
-        
-        return o;
-    }
     
     public void setHref(String s ) {
         __href = s;
@@ -142,4 +127,48 @@ public class Form extends JSONEntity{
     public void setExpectedResponse(ExpectedResponse e) {
         __response = e;
     }
+    @Override
+    public JSONObject asJSON() throws WoTException{
+        final JSONObject o = new JSONObject();
+        if (__ops != null) {
+            final List<String> opList = new ArrayList<>();
+            for(Operation.id op : __ops) {
+                opList.add(Operation.decodeId(op));
+            }
+            addSingleItemOrList("op", opList, o);
+        }
+        
+        addRequiredString("href", __href, o);
+        addString("contentType",__contentType,o);
+        addString("contentCoding",__contentCoding,o);
+        addString("subprotocol",__subprotocol,o);
+        addSingleItemOrList("security", __security, o);
+        addSingleItemOrList("scopes", __scopes, o);
+        addJSONEntity("response", __response, o);
+        
+        return o;
+    }
+
+    @Override
+    public JSONEntity fromJSON(JSONObject o) throws WoTException {
+        __href = JSONEntityHelpers.readObject(o, "href", String.class);
+        __contentType = JSONEntityHelpers.readObject(o, "contentType", String.class);
+        __contentCoding = JSONEntityHelpers.readObject(o, "contentCoding", String.class);
+        __subprotocol = JSONEntityHelpers.readObject(o, "subprotocol", String.class);
+        __security = JSONEntityHelpers.readCollection(o, "security", String.class, TreeSet.class);
+        __scopes = JSONEntityHelpers.readCollection(o, "scopes", String.class, TreeSet.class);
+        __response = JSONEntityHelpers.readEntity(o, "response", ExpectedResponse.class);
+        
+        final List<String>  op_ids = JSONEntityHelpers.readObjectSingleOrList(o, "op", String.class, ArrayList.class);
+        if (op_ids != null) {
+            __ops = new ArrayList<>();
+            for(final String s : op_ids) {
+                __ops.add(Operation.decodeId(s));
+            }
+        }
+        
+        return this;
+    }
+    
+    
 }

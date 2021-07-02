@@ -6,6 +6,8 @@
 package io.webthings.webthing.forms;
 
 import io.webthings.webthing.JSONEntity;
+import io.webthings.webthing.common.JSONEntityHelpers;
+import io.webthings.webthing.exceptions.WoTException;
 import org.json.JSONObject;
 
 /**
@@ -39,5 +41,11 @@ public class ExpectedResponse extends JSONEntity {
             ret.put("contentType", __contentType);
         }
         return ret;
+    }
+
+    @Override
+    public JSONEntity fromJSON(JSONObject o) throws WoTException {
+        __contentType = JSONEntityHelpers.readObject(o, "contentType", String.class);
+        return this;
     }
 }

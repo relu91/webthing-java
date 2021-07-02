@@ -6,6 +6,14 @@
 package io.webthings.webthing.affordances;
 
 import io.webthings.webthing.JSONEntity;
+import io.webthings.webthing.common.DataSchema;
+import io.webthings.webthing.common.JSONEntityHelpers;
+import static io.webthings.webthing.common.JSONEntityHelpers.addCollection;
+import static io.webthings.webthing.common.JSONEntityHelpers.addJSONEntityCollection;
+import static io.webthings.webthing.common.JSONEntityHelpers.addSingleItemOrList;
+import static io.webthings.webthing.common.JSONEntityHelpers.addString;
+import static io.webthings.webthing.common.JSONEntityHelpers.checkedInitList;
+import io.webthings.webthing.exceptions.WoTException;
 import io.webthings.webthing.forms.Form;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,29 +25,29 @@ import org.json.JSONObject;
  *
  * @author Lorenzo
  */
-public class Interaction extends JSONEntity{
+public class InteractionAfordance extends JSONEntity{
     private     String                   __title;
     private     Map<String,String>       __titles;
     private     String                   __description;
     private     Map<String,String>       __descriptions;
     private     List<String>             __types;
     private     List<Form>              __forms;
+    private     Map<String, DataSchema> __uriVariables;
     
-    public Interaction() {
+    public InteractionAfordance() {
         
     }
     
-    public Interaction(Form f ) {
+    public InteractionAfordance(Form f ) {
         __forms = new ArrayList<>();
         __forms.add(f);
     }
     
-    public Interaction(String type, String title, String desc, Form f ) {
+    public InteractionAfordance(String type, String title, String desc, Form f ) {
         this(f);
         __title = title;
         __description = desc;
         __types = checkedInitList(type);
-        
         
     }
     
@@ -116,6 +124,31 @@ public class Interaction extends JSONEntity{
             __descriptions.remove(lang);
     }
     
+    public void addForm(Form f )  {
+        __forms.add(f);
+    }
+    
+    public List<Form>  getForms() {
+        return __forms;
+    }
+    
+    public Map<String, DataSchema>  getUriVariables() {
+        return  __uriVariables;
+    }
+    
+    public DataSchema   getUriVariable(String s) {
+        final DataSchema ret = (__uriVariables == null ? null : __uriVariables.get(s));
+        return ret;
+    }
+    
+    public void         putUriVariable(String s, DataSchema d) {
+        if (__uriVariables == null)
+            __uriVariables = new TreeMap<>();
+        
+        __uriVariables.put(s, d);
+    }
+
+    @Override
     public JSONObject   asJSON() {
         final JSONObject ret = new JSONObject();
         
@@ -126,15 +159,19 @@ public class Interaction extends JSONEntity{
         addString("description",__description,ret);
         addCollection("descriptions",__descriptions,ret);
         addJSONEntityCollection("forms",__forms, ret);
+        //addCollection(__title, __titles, ret);"uriVariables", __uriVariables, ret);
         return ret;
     }
-    public void addForm(Form f )  {
-        __forms.add(f);
+    
+    @Override
+    public JSONEntity fromJSON(JSONObject o) throws WoTException {
+        __title = JSONEntityHelpers.readObject(o, "title", String.class);
+        __titles = JSONEntityHelpers.readCollection(o, "titles", String.class,TreeMap.class);
+        __description = JSONEntityHelpers.readObject(o, "description", String.class);
+        __descriptions = JSONEntityHelpers.readCollection(o, "descriptions", String.class,TreeMap.class);
+        __types = JSONEntityHelpers.readObjectSingleOrList(o, "@type", String.class, ArrayList.class);
+        __forms = JSONEntityHelpers.readEntityCollection(o, "forms", Form.class, ArrayList.class);
+        //__uriVariables 
+        return this;
     }
-    
-    public List<Form>  getForms() {
-        return __forms;
-    }
-    
-    
 }
