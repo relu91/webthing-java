@@ -105,19 +105,19 @@ public class Form extends JSONEntity{
     }
     
     public void addScope(String s) {
-        if (__security == null)
-            __security = new TreeSet<>();
+        if (__scopes == null)
+            __scopes = new TreeSet<>();
         
-        __security.add(s);
+        __scopes.add(s);
     }
     
     public void removeScope(String s ) {
-        if (__security != null)
-            __security.remove(s);
+        if (__scopes != null)
+            __scopes.remove(s);
     }
     
     public Set<String> getScope() {
-        return __security;
+        return __scopes;
     }
     
     public ExpectedResponse getExpectedResponse() {
@@ -170,5 +170,7 @@ public class Form extends JSONEntity{
         return this;
     }
     
-    
+    public List<Operation.id> getOperationList() {
+        return __ops;
+    }
 }

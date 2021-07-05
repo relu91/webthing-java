@@ -5,7 +5,7 @@
  */
 package io.webthings.webthing.example;
 
-import io.webthings.webthing.affordances.InteractionAfordance;
+import io.webthings.webthing.affordances.InteractionAffordance;
 import io.webthings.webthing.forms.Form;
 import io.webthings.webthing.forms.Operation.id;
 import org.json.JSONObject;
@@ -16,7 +16,7 @@ import org.json.JSONObject;
  */
 public class InteractionTest {
     public static void main(String[] args  ) {
-        final InteractionAfordance i = new InteractionAfordance("boolean", "AInt", "a Weird interaction ", new Form("/pippo.pluto"));
+        final InteractionAffordance i = new InteractionAffordance("boolean", "AInt", "a Weird interaction ", new Form("/pippo.pluto"));
         System.out.println(i.asJSON().toString());
         i.addForm(new Form(id.invokeaction,"http://giug"));
         final JSONObject o2 = i.asJSON();

@@ -9,18 +9,26 @@ import io.webthings.webthing.JSONEntity;
 import io.webthings.webthing.common.DataSchema;
 import io.webthings.webthing.common.JSONEntityHelpers;
 import io.webthings.webthing.exceptions.WoTException;
+import io.webthings.webthing.forms.Operation;
+import java.util.Arrays;
+import java.util.Set;
+import java.util.TreeSet;
 import org.json.JSONObject;
 
 /**
  *
  * @author Lorenzo
  */
-public class ActionAffordance extends InteractionAfordance {
-    private DataSchema      __input;
-    private DataSchema      __output;
-    private Boolean         __safe;
-    private Boolean         __idempotent;
+public class ActionAffordance extends InteractionAffordance {
+    private DataSchema                  __input;
+    private DataSchema                  __output;
+    private Boolean                     __safe;
+    private Boolean                     __idempotent;
+    private static  Set<Operation.id>   __allowed_ops = new TreeSet<>(Arrays.asList(Operation.id.invokeaction));
     
+    public ActionAffordance() {
+        super(__allowed_ops);
+    }
     public DataSchema   getInput() {
         return  __input;
     }

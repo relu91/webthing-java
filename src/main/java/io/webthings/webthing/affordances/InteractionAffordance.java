@@ -13,11 +13,14 @@ import static io.webthings.webthing.common.JSONEntityHelpers.addJSONEntityCollec
 import static io.webthings.webthing.common.JSONEntityHelpers.addSingleItemOrList;
 import static io.webthings.webthing.common.JSONEntityHelpers.addString;
 import static io.webthings.webthing.common.JSONEntityHelpers.checkedInitList;
+import io.webthings.webthing.exceptions.InvalidFieldException;
 import io.webthings.webthing.exceptions.WoTException;
 import io.webthings.webthing.forms.Form;
+import io.webthings.webthing.forms.Operation;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 import org.json.JSONObject;
 
@@ -25,7 +28,7 @@ import org.json.JSONObject;
  *
  * @author Lorenzo
  */
-public class InteractionAfordance extends JSONEntity{
+public class InteractionAffordance extends JSONEntity{
     private     String                   __title;
     private     Map<String,String>       __titles;
     private     String                   __description;
@@ -33,17 +36,21 @@ public class InteractionAfordance extends JSONEntity{
     private     List<String>             __types;
     private     List<Form>              __forms;
     private     Map<String, DataSchema> __uriVariables;
+    private     Set<Operation.id>       __allowedOps;
     
-    public InteractionAfordance() {
+    protected InteractionAffordance(Set<Operation.id> allowedOps) {
+        __allowedOps = allowedOps;
+    }
+    public InteractionAffordance() {
         
     }
     
-    public InteractionAfordance(Form f ) {
+    public InteractionAffordance(Form f ) {
         __forms = new ArrayList<>();
         __forms.add(f);
     }
     
-    public InteractionAfordance(String type, String title, String desc, Form f ) {
+    public InteractionAffordance(String type, String title, String desc, Form f ) {
         this(f);
         __title = title;
         __description = desc;
@@ -124,7 +131,8 @@ public class InteractionAfordance extends JSONEntity{
             __descriptions.remove(lang);
     }
     
-    public void addForm(Form f )  {
+    public void addForm(Form f ) throws WoTException {
+        checkForm(f);
         __forms.add(f);
     }
     
@@ -160,6 +168,8 @@ public class InteractionAfordance extends JSONEntity{
         addCollection("descriptions",__descriptions,ret);
         addJSONEntityCollection("forms",__forms, ret);
         //addCollection(__title, __titles, ret);"uriVariables", __uriVariables, ret);
+        
+        
         return ret;
     }
     
@@ -171,7 +181,24 @@ public class InteractionAfordance extends JSONEntity{
         __descriptions = JSONEntityHelpers.readCollection(o, "descriptions", String.class,TreeMap.class);
         __types = JSONEntityHelpers.readObjectSingleOrList(o, "@type", String.class, ArrayList.class);
         __forms = JSONEntityHelpers.readEntityCollection(o, "forms", Form.class, ArrayList.class);
+        //checks all form operations
+        for(final Form f : __forms ) {
+            checkForm(f);
+        }
         //__uriVariables 
         return this;
+    }
+    
+    private void checkForm(Form f ) throws WoTException{
+        final List<Operation.id> opList = f.getOperationList();
+        
+        if (opList != null) {
+            for(final Operation.id i : opList) {
+                if (__allowedOps.contains(i) == false) {
+                    throw new InvalidFieldException("operation", i.toString());
+                }
+            }
+        }
+        
     }
 }
