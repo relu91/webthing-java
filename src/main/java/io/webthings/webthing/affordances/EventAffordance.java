@@ -23,7 +23,7 @@ public class EventAffordance extends InteractionAffordance  {
     private DataSchema          __subscription;
     private DataSchema          __data;
     private DataSchema          __cancellation;
-    private static  Set<Operation.id>   __allowed_ops = new TreeSet<>(Arrays.asList(Operation.id.subscribeevent, Operation.id.unsubscribeevent));
+    private final static  Set<Operation.id>   __allowed_ops = new TreeSet<>(Arrays.asList(Operation.id.subscribeevent, Operation.id.unsubscribeevent));
     
     public EventAffordance() {
         super(__allowed_ops);

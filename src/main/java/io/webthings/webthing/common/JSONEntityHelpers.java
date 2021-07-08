@@ -6,8 +6,10 @@
 package io.webthings.webthing.common;
 
 import io.webthings.webthing.JSONEntity;
+import io.webthings.webthing.exceptions.InvalidFieldException;
 import io.webthings.webthing.exceptions.MissingFieldException;
 import io.webthings.webthing.exceptions.WoTException;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -112,6 +114,24 @@ public class JSONEntityHelpers {
         }        
     }
 
+    public static void addJSONEntityCollection(String name, Map<String, ? extends JSONEntity> c, JSONObject o ) {
+        if (c != null && c.size() >  0) {
+            final JSONObject m = new JSONObject();
+            
+            for(final Map.Entry<String,? extends JSONEntity> e : c.entrySet() ) {
+                try {
+                    final String key = e.getKey();
+                    final JSONEntity val = e.getValue();
+                    m.put(key,val.asJSON());
+                } catch(Exception ee ) {
+                    System.err.println(ee);
+                }
+            }
+            
+            o.put(name, m);
+        
+        }        
+    }
   
     public static  <__T extends JSONEntity,__COLL extends Collection<__T> > __COLL readEntityCollection (JSONObject root, String name, Class<__T> cls,Class<__COLL> ccls) {
         __COLL ret  = null;
@@ -139,15 +159,16 @@ public class JSONEntityHelpers {
             final JSONObject    o = root.getJSONObject(name);
             if ( o != null) {
                 final   __T  c = cls.newInstance();
-                ret = (__T) c.fromJSON(o);
+                if (c instanceof DataSchema)
+                    ret = (__T) DataSchema.newInstance(o);
+                else
+                    ret = (__T) c.fromJSON(o);
             }
         } catch(Exception e ) {
             System.err.println(e);
         }
         
         return ret;
-        
-        
     }
    
     public static  <__T > __T readObject (JSONObject root, String name, Class<__T> cls) {
@@ -234,4 +255,61 @@ public class JSONEntityHelpers {
         return ret;        
     }
 
+    public static  <__T extends JSONEntity,__COLL extends Collection<__T> > __COLL readSingleEntityOrCollection (JSONObject root, String name, Class<__T> cls,Class<__COLL> ccls) {
+        final __T  ent = readEntity(root, name, cls);
+        __COLL ret = null;
+        if (ent == null) {
+            //try collection 
+            ret = readEntityCollection(root, name, cls, ccls);
+        } else {
+            try {
+                ret = ccls.newInstance();
+                ret.add(ent);
+            } catch(Exception e ) {
+                
+            }
+            
+        }
+        
+        return ret;
+    }
+    
+    public static void addJSONSingleEntityOrCollection(String name, List<? extends JSONEntity> c, JSONObject o ) {
+        if (c == null)
+            return;
+        
+        if (c.size() == 0 )
+            return;
+        
+        if (c.size() == 1 ) {
+            addJSONEntity(name, c.get(0), o);
+        } else {
+            addJSONSingleEntityOrCollection(name, c, o);
+        }
+    }
+    
+    public static void addURI(String name, java.net.URI uri, JSONObject o ) {
+        if (uri == null)
+            return;
+        
+        final String s = uri.toString();
+        
+        addString(name, s, o);
+    }
+    
+    public static java.net.URI readURI(JSONObject root, String name ) throws WoTException {
+        java.net.URI ret = null;
+        final String s = readObject(root, name, String.class);
+        
+        if (s == null || s.length() == 0 )
+            return null;
+        
+        try {
+            ret = new java.net.URI(s);
+        }  catch (URISyntaxException e ) {
+            throw new InvalidFieldException(name,s);
+        }
+        
+        return ret;
+    }
 }

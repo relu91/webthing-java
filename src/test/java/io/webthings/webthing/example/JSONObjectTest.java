@@ -6,6 +6,7 @@
 package io.webthings.webthing.example;
 
 import java.util.Map;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 /**
@@ -17,6 +18,7 @@ public class JSONObjectTest {
         testSingle();
         testDouble();
         testComposite();
+        testArray();
     }
     
     private static void testSingle() {
@@ -35,6 +37,24 @@ public class JSONObjectTest {
         
         System.out.println(o.toString());
         
+    }
+    
+    private static void testArray() {
+        final JSONObject o = new JSONObject();
+        
+       final JSONArray a = new JSONArray();
+       
+       a.put("a");
+       a.put("b");
+       a.put("c");
+       
+       o.put("aa", a);
+       
+       final Object z1 = o.get("aa");
+       final JSONObject z2 = o.getJSONObject("aa");
+       
+       final int rr = 44;
+       
     }
     
     private static void testComposite() {

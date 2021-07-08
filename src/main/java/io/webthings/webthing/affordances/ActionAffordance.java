@@ -24,7 +24,7 @@ public class ActionAffordance extends InteractionAffordance {
     private DataSchema                  __output;
     private Boolean                     __safe;
     private Boolean                     __idempotent;
-    private static  Set<Operation.id>   __allowed_ops = new TreeSet<>(Arrays.asList(Operation.id.invokeaction));
+    private final static  Set<Operation.id>   __allowed_ops = new TreeSet<>(Arrays.asList(Operation.id.invokeaction));
     
     public ActionAffordance() {
         super(__allowed_ops);

@@ -5,20 +5,17 @@
  */
 package io.webthings.webthing.forms;
 
-import io.webthings.webthing.JSONEntity;
 import io.webthings.webthings.Common;
 import static io.webthings.webthings.Common.checkGetter;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
-import org.json.JSONObject;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 /**
  *

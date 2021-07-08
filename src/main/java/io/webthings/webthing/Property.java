@@ -3,6 +3,7 @@
  */
 package io.webthings.webthing;
 
+import io.webthings.webthing.common.DataSchema;
 import org.everit.json.schema.Schema;
 import org.everit.json.schema.ValidationException;
 import org.everit.json.schema.loader.SchemaLoader;
@@ -23,7 +24,6 @@ public class Property<T> {
     private final String href;
     private final JSONObject metadata;
     private final Value<T> value;
-
     /**
      * Initialize the object.
      *
@@ -99,7 +99,7 @@ public class Property<T> {
         if (description.has("links")) {
             description.getJSONArray("links").put(link);
         } else {
-            JSONArray links = new JSONArray();
+            final JSONArray links = new JSONArray();
             links.put(link);
             description.put("links", links);
         }

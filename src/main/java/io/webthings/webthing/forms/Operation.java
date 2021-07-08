@@ -26,6 +26,7 @@ public class Operation {
         writemultipleproperties
     };
     public static id decodeId(String i) throws InvalidFieldException {
+        
         id ret = null;
         
         switch(i) {
@@ -64,7 +65,7 @@ public class Operation {
                 ret = id.writemultipleproperties;
                 break;
             default:
-                throw new InvalidFieldException("operation= " + i);
+                throw new InvalidFieldException("operation", i);
             
         }
         
@@ -109,7 +110,7 @@ public class Operation {
                 ret = "writemultipleproperties";
                 break;
             default:
-                throw new InvalidFieldException("operation= " + i);
+                throw new InvalidFieldException("operation", i.toString());
             
         }
         
