@@ -152,6 +152,26 @@ public class JSONEntityHelpers {
         
         return ret;
     }
+    public static  <__T extends JSONEntity,__COLL extends Map<String,__T> > __COLL readEntityMap (JSONObject root, String name, Class<__T> cls,Class<__COLL> ccls) {
+        __COLL ret  = null;
+        try {
+            final JSONObject o = root.getJSONObject(name);
+            if (o != null) {
+                ret = ccls.newInstance();
+                for(final String key : o.keySet()) {
+                    final JSONObject child = o.getJSONObject(key);
+                    final __T        retType = (__T) cls.newInstance().fromJSON(child);
+                    ret.put(key, retType);
+                    
+                }
+                
+            }
+        } catch(Exception e ) {
+            System.err.println(e);
+        }
+        
+        return ret;
+    }    
     public static  <__T extends JSONEntity> __T readEntity (JSONObject root, String name, Class<__T> cls) {
         __T ret = null;
         try {
@@ -298,18 +318,23 @@ public class JSONEntityHelpers {
     }
     
     public static java.net.URI readURI(JSONObject root, String name ) throws WoTException {
-        java.net.URI ret = null;
-        final String s = readObject(root, name, String.class);
-        
-        if (s == null || s.length() == 0 )
-            return null;
-        
         try {
-            ret = new java.net.URI(s);
-        }  catch (URISyntaxException e ) {
-            throw new InvalidFieldException(name,s);
+            return readObject(root, name, java.net.URI.class);
+        } catch(Exception e) {
+            java.net.URI ret = null;
+            final String s = readObject(root, name, String.class);
+
+            if (s == null || s.length() == 0 )
+                return null;
+
+            try {
+                ret = new java.net.URI(s);
+            }  catch (URISyntaxException ee ) {
+                throw new InvalidFieldException(name,s);
+            }
+
+            return ret;
+            
         }
-        
-        return ret;
     }
 }

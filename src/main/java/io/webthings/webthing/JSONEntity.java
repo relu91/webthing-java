@@ -5,14 +5,7 @@
  */
 package io.webthings.webthing;
 
-import io.webthings.webthing.exceptions.MissingFieldException;
 import io.webthings.webthing.exceptions.WoTException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
 import org.json.JSONObject;
 
 /**

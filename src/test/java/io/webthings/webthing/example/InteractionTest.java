@@ -16,9 +16,10 @@ import org.json.JSONObject;
  */
 public class InteractionTest {
     public static void main(String[] args  ) {
-        final InteractionAffordance i = new InteractionAffordance("boolean", "AInt", "a Weird interaction ", new Form("/pippo.pluto"));
-        System.out.println(i.asJSON().toString());
         try {
+            final InteractionAffordance i = new InteractionAffordance("boolean", "AInt", "a Weird interaction ", new Form("/pippo.pluto"));
+            System.out.println(i.asJSON().toString());
+            
             i.addForm(new Form(id.invokeaction,"http://giug"));
             final JSONObject o2 = i.asJSON();
 

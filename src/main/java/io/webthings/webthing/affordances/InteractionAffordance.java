@@ -133,6 +133,10 @@ public class InteractionAffordance extends JSONEntity{
     
     public void addForm(Form f ) throws WoTException {
         checkForm(f);
+        if (__forms == null)
+            __forms = new ArrayList<>();
+        
+        
         __forms.add(f);
     }
     

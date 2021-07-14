@@ -9,6 +9,7 @@ import io.webthings.webthing.JSONEntity;
 import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
@@ -236,8 +237,10 @@ public class Common {
                 final Object o = e.getValue();
                 
                 final Object this_val = res.get(key);
-                
-                assertEquals("Object " + key + " does not match", this_val,o);
+                if (this_val instanceof URI || o instanceof URI) {
+                assertEquals("Object " + key + " does not match", this_val.toString(),o.toString());
+                } else
+                    assertEquals("Object " + key + " does not match", this_val,o);
                 
             }
             

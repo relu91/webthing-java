@@ -19,6 +19,7 @@ public class JSONObjectTest {
         testDouble();
         testComposite();
         testArray();
+        testMap();
     }
     
     private static void testSingle() {
@@ -51,7 +52,7 @@ public class JSONObjectTest {
        o.put("aa", a);
        
        final Object z1 = o.get("aa");
-       final JSONObject z2 = o.getJSONObject("aa");
+//       final JSONObject z2 = o.getJSONObject("aa");
        
        final int rr = 44;
        
@@ -78,4 +79,12 @@ public class JSONObjectTest {
         
     }
     
+    private static void testMap() {
+        final String props = "{  \"properties\": {\r\n        \"status\": {\r\n            \"type\": \"string\",\r\n            \"readOnly\" : false,\r\n            \"writeOnly\" : false,\r\n            \"forms\": [{\r\n                \"op\": [\r\n                    \"readproperty\",\r\n                    \"writeproperty\"\r\n                ],\r\n                \"href\": \"https://mylamp.example.com/status\",\r\n                \"contentType\": \"application/json\"\r\n            }]\r\n        }\r\n    }}";
+        final JSONObject o = new JSONObject(props);
+        
+        int x = 11;
+        
+        
+    }
 }

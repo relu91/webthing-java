@@ -1,104 +1,71 @@
 package io.webthings.webthing.example;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
 
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.UUID;
-
-import io.webthings.webthing.Action;
-import io.webthings.webthing.Event;
-import io.webthings.webthing.Property;
-import io.webthings.webthing.Thing;
-import io.webthings.webthing.Value;
-import io.webthings.webthing.WebThingServer;
-import io.webthings.webthing.errors.PropertyError;
+import io.webthings.webthing.affordances.ActionAffordance;
+import io.webthings.webthing.affordances.PropertyAffordance;
+import io.webthings.webthing.common.ThingData;
+import io.webthings.webthing.exceptions.WoTException;
+import io.webthings.webthing.forms.Form;
+import io.webthings.webthing.server.Action;
+import io.webthings.webthing.server.ActionHandler;
+import io.webthings.webthing.server.ThingObject;
+import io.webthings.webthing.server.ThingServer;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class SingleThing {
-    public static Thing makeThing() {
-        Thing thing = new Thing("urn:dev:ops:my-lamp-1234",
-                                "My Lamp",
-                                new JSONArray(Arrays.asList("OnOffSwitch",
-                                                            "Light")),
-                                "A web connected lamp");
-
-        JSONObject onDescription = new JSONObject();
-        onDescription.put("@type", "OnOffProperty");
-        onDescription.put("title", "On/Off");
-        onDescription.put("type", "boolean");
-        onDescription.put("description", "Whether the lamp is turned on");
-        thing.addProperty(new Property(thing,
-                                       "on",
-                                       new Value(true),
-                                       onDescription));
-
-        JSONObject brightnessDescription = new JSONObject();
-        brightnessDescription.put("@type", "BrightnessProperty");
-        brightnessDescription.put("title", "Brightness");
-        brightnessDescription.put("type", "integer");
-        brightnessDescription.put("description",
-                                  "The level of light from 0-100");
-        brightnessDescription.put("minimum", 0);
-        brightnessDescription.put("maximum", 100);
-        brightnessDescription.put("unit", "percent");
-        thing.addProperty(new Property(thing,
-                                       "brightness",
-                                       new Value(50),
-                                       brightnessDescription));
-
-        JSONObject fadeMetadata = new JSONObject();
-        JSONObject fadeInput = new JSONObject();
-        JSONObject fadeProperties = new JSONObject();
-        JSONObject fadeBrightness = new JSONObject();
-        JSONObject fadeDuration = new JSONObject();
-        fadeMetadata.put("title", "Fade");
-        fadeMetadata.put("description", "Fade the lamp to a given level");
-        fadeInput.put("type", "object");
-        fadeInput.put("required",
-                      new JSONArray(Arrays.asList("brightness", "duration")));
-        fadeBrightness.put("type", "integer");
-        fadeBrightness.put("minimum", 0);
-        fadeBrightness.put("maximum", 100);
-        fadeBrightness.put("unit", "percent");
-        fadeDuration.put("type", "integer");
-        fadeDuration.put("minimum", 1);
-        fadeDuration.put("unit", "milliseconds");
-        fadeProperties.put("brightness", fadeBrightness);
-        fadeProperties.put("duration", fadeDuration);
-        fadeInput.put("properties", fadeProperties);
-        fadeMetadata.put("input", fadeInput);
-        thing.addAvailableAction("fade", fadeMetadata, FadeAction.class);
-
-        JSONObject overheatedMetadata = new JSONObject();
-        overheatedMetadata.put("description",
-                               "The lamp has exceeded its safe operating temperature");
-        overheatedMetadata.put("type", "number");
-        overheatedMetadata.put("unit", "degree celsius");
-        thing.addAvailableEvent("overheated", overheatedMetadata);
-
-        return thing;
+    public static class ToggleHandler extends ActionHandler {
+        private boolean  __state = false;
+        public void run() {
+            System.out.println("Current state : " + __state);
+            __state = !__state;
+            System.out.println("New  state : " + __state);
+        }
+    }
+    public static List<ThingObject> makeThing() throws URISyntaxException,WoTException{
+        final List<ThingObject> ret = new ArrayList<>();
+        final ThingData   td = new ThingData();
+        final PropertyAffordance pa_name = new PropertyAffordance();
+        pa_name.setDefaultTitle("Name");
+        pa_name.setDefaultDescription("The real name");
+        pa_name.addForm(new Form("/single/name"));
+        td.addProperty("name", pa_name);
+        
+        final ActionAffordance aa_toggle = new ActionAffordance();
+        aa_toggle.setDefaultTitle("Toggle");
+        aa_toggle.setDefaultDescription("Toggle Action");
+        aa_toggle.addForm(new Form("/single/toggle"));
+        td.addAction("toggle", aa_toggle);
+        
+        
+        
+        final ThingObject to = new ThingObject(td);
+        to.addAction(new Action("toggle",aa_toggle,ToggleHandler.class));
+        
+        ret.add(to);
+        return ret;
     }
 
     public static void main(String[] args) {
-        Thing thing = makeThing();
-        WebThingServer server;
+        
+        
 
         try {
             // If adding more than one thing, use MultipleThings() with a name.
             // In the single thing case, the thing's name will be broadcast.
-            server = new WebThingServer(new WebThingServer.SingleThing(thing),
-                                        8888);
+            final List<ThingObject> thing = makeThing();
+            final ThingServer server = new ThingServer(thing, 8888);
 
             Runtime.getRuntime().addShutdownHook(new Thread(server::stop));
 
             server.start(false);
-        } catch (IOException e) {
+        } catch (Exception e) {
             System.out.println(e.toString());
             System.exit(1);
         }
     }
-
+/*
     public static class OverheatedEvent extends Event {
         public OverheatedEvent(Thing thing, int data) {
             super(thing, "overheated", data);
@@ -128,4 +95,5 @@ public class SingleThing {
             }
         }
     }
+*/
 }

@@ -7,6 +7,7 @@ package io.webthings.webthing.forms;
 
 import io.webthings.webthings.Common;
 import static io.webthings.webthings.Common.checkGetter;
+import java.net.URI;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -46,9 +47,9 @@ public class FormTest {
      * Test of setHref method, of class Form.
      */
     @Test
-    public void testSetHref() {
+    public void testSetHref()throws Exception {
         System.out.println("setHref");
-        Common.checkSetter(Form.class, "Href", "__href", "http://1.2.3.4");
+        Common.checkSetter(Form.class, "Href", "__href", new URI("http://1.2.3.4"));
         
     }
 
@@ -56,10 +57,10 @@ public class FormTest {
      * Test of getHref method, of class Form.
      */
     @Test
-    public void testGetHref() {
+    public void testGetHref() throws Exception{
         System.out.println("getHref");
-        checkGetter(Form.class, "Href","__href","http://3.4.5.6");
-    }
+        checkGetter(Form.class, "Href","__href", new URI("http://3.4.5.6"));
+    } 
 
     /**
      * Test of setContentType method, of class Form.
@@ -197,7 +198,7 @@ public class FormTest {
     public void testAsJSON() throws Exception {
         System.out.println("AsJSON");
         
-        final String href = "http;//4.5.6.7";
+        final URI href = new URI("http;//4.5.6.7");
         final String contentCoding = "UTF-8";
         
         final Map<Common.TestFieldId,Object> expVals = new TreeMap<>();
@@ -221,7 +222,7 @@ public class FormTest {
         final String contentCoding = "UTF-8";
         
         final Map<Common.TestFieldId,Object> expVals = new TreeMap<>();
-        Common.addTestFieldVal("href", "__href", href, expVals);
+        Common.addTestFieldVal("href", "__href", new URI( href), expVals);
         Common.addTestFieldVal("contentCoding", "__contentCoding", contentCoding, expVals);
         
         
