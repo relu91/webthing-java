@@ -13,7 +13,6 @@ import io.webthings.webthing.forms.Operation;
 import java.util.Arrays;
 import java.util.Set;
 import java.util.TreeSet;
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 /**

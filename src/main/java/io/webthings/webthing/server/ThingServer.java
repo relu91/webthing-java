@@ -165,7 +165,8 @@ public class ThingServer extends RouterNanoHTTPD {
         //register all URLs
         loadURLMap(mti.getActionsURL());
         loadURLMap(mti.getPropertiesURL());
-        
+        loadURLMap(mti.getEventsURL());
+        loadURLMap(mti.getRootFormsURL());
         
         
 
@@ -177,6 +178,7 @@ public class ThingServer extends RouterNanoHTTPD {
         for(final Map.Entry<String,Class> e : coll.entrySet()) {
             final String u = e.getKey();
             final Class  c = e.getValue();
+            System.out.println("Added route for " + u + " for handler " + c.getName());
             addRoute(
                 u, 
                 c,                      

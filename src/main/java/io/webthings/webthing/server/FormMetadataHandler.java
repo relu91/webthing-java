@@ -21,7 +21,7 @@ import org.json.JSONObject;
  *
  * @author Lorenzo
  */
-public class PropertyHandler  extends BaseHandler{
+public class FormMetadataHandler  extends BaseHandler{
     private class BadRequest extends Exception {
         
     }
@@ -29,7 +29,7 @@ public class PropertyHandler  extends BaseHandler{
         
     }
     
-    public PropertyHandler() {
+    public FormMetadataHandler() {
         
     }
     @Override
@@ -39,7 +39,7 @@ public class PropertyHandler  extends BaseHandler{
         NanoHTTPD.IHTTPSession session
     ) {
         
-        return handleProperty(uriResource, urlParams, session, "GET");
+        return handleRootForm(uriResource, urlParams, session, "GET");
     }
 
     @Override
@@ -48,7 +48,7 @@ public class PropertyHandler  extends BaseHandler{
         Map<String, String> urlParams,
         NanoHTTPD.IHTTPSession session
     )    {
-        return handleProperty(uriResource, urlParams, session, "POST");
+        return handleRootForm(uriResource, urlParams, session, "POST");
     }
     /**
      * Handle a PUT request.
@@ -64,12 +64,12 @@ public class PropertyHandler  extends BaseHandler{
         Map<String, String> urlParams,
         NanoHTTPD.IHTTPSession session
     ) {
-        return handleProperty(uriResource, urlParams, session, "PUT");
+        return handleRootForm(uriResource, urlParams, session, "PUT");
     }
     
     //inner generic handle
     
-    private NanoHTTPD.Response handleProperty(
+    private NanoHTTPD.Response handleRootForm(
         RouterNanoHTTPD.UriResource uriResource,
         Map<String, String>         urlParams,
         NanoHTTPD.IHTTPSession      session,
@@ -85,12 +85,11 @@ public class PropertyHandler  extends BaseHandler{
         
         final ManagedThingsCollection mti = ManagedThingsCollection.getInstance();
         final String                path = "/" +  uriResource.getUri();
-        final InteractionAffordance ia = mti.getInteraction(path);
-        final String                iName = mti.getInteractionName(path);
-        final ThingObject           owner = mti.getInteractionOwner(path);
+        final Form                  fd = mti.getRootForm(path);
+        final ThingObject           owner = mti.getRootFormOwner(path);
         
         
-        if (ia == null || iName == null || owner == null) {
+        if (fd == null || owner == null) {
             return corsResponse(NanoHTTPD.newFixedLengthResponse(
                     NanoHTTPD.Response.Status.NOT_FOUND,
                     null,
@@ -101,33 +100,32 @@ public class PropertyHandler  extends BaseHandler{
         //look through forms to find what the hell is he asking for
         Operation.id        thisOp = null;
         boolean             found  = false;
-        for(final Form f : ia.getForms()) {
-            final String thisPath = f.getHref().toString();
-            String thisMethod = f.getHTTPMethodName();
-            if (path.equals(thisPath)) {
-                final List<Operation.id> oplist = f.getOperationList();
-                thisOp = oplist != null && oplist.size() > 0 ? oplist.get(0) : null;
-                if (thisOp != null) {
-                    if (thisMethod == null || thisMethod.length() == 0 )    {
-                        switch(thisOp) {
-                            case readproperty:
-                                thisMethod = "GET";
-                                break;
-                            case writeproperty:
-                                thisMethod = "PUT";
-                                break;
-                        }
-                        
-                        if (methodName.equals(thisMethod)) {
-                            found = true;
+        final String thisPath = fd.getHref().toString();
+        String thisMethod = fd.getHTTPMethodName();
+        if (path.equals(thisPath)) {
+            final List<Operation.id> oplist = fd.getOperationList();
+            thisOp = oplist != null && oplist.size() > 0 ? oplist.get(0) : null;
+            if (thisOp != null) {
+                if (thisMethod == null || thisMethod.length() == 0 )    {
+                    switch(thisOp) {
+                        case readallproperties:
+                        case readmultipleproperties:
+                            thisMethod = "GET";
                             break;
-                        }
+                        case writeallproperties:
+                        case writemultipleproperties:
+                            thisMethod = "PUT";
+                            break;
+                    }
+
+                    if (methodName.equals(thisMethod)) {
+                        found = true;
+                        
                     }
                 }
             }
-            
         }
-        
+            
         if (found == false) {
             return NanoHTTPD.newFixedLengthResponse(
                 NanoHTTPD.Response.Status.BAD_REQUEST,
@@ -139,14 +137,79 @@ public class PropertyHandler  extends BaseHandler{
         try {
             JSONObject obj = null;
             switch(thisOp) {
-                case readproperty: {
-                    obj = readProperty(uriResource, urlParams, session);
+                case readmultipleproperties: {
                     break;
-                    
                 }
-                case writeproperty: {
+                case readallproperties: {
                     obj = new JSONObject();
-                    writeProperty(uriResource, urlParams, session, obj);
+                    for(final Map.Entry<String,Property> e : owner.getProperties().entrySet()) {
+                        try {
+                            final String name   = e.getKey();
+                            final Property   p  = e.getValue();
+                            checkRead(p);
+                        
+                            Object value = (p != null ? p.getValue() : null);
+                            if (value == null) {
+                                obj.put(name, JSONObject.NULL);
+                            } else {
+                                obj.putOpt(name, value);
+                            }
+                        } catch(BadAccess ee ) {
+                            continue;
+                        }
+                        
+                    }
+                    break;
+                }
+                case writemultipleproperties: {
+                    break;
+                }
+                
+                case writeallproperties: {
+                    final JSONObject json = this.parseBody(session);
+                    if (json == null)
+                        throw new BadRequest();
+                    //first pass, check that all properties are specified 
+                    final Set<String> jsonKeys = new TreeSet<String>(json.keySet());
+                    final Set<String> propertyKeys = new TreeSet<String>(owner.getProperties().keySet());
+                    
+                    for(final String k : json.keySet()) {
+                        if (propertyKeys.contains(k)) {
+                            propertyKeys.remove(k);
+                            jsonKeys.remove(k);
+                        }
+                    }
+                    
+                    //now.remove all properties that cannot be written
+                    for(final String k : owner.getProperties().keySet()) {
+                        try {
+                            final Property p = owner.getProperty(k);
+                            checkWrite(p);
+                        } catch(BadAccess ee ) {
+                            //read-only, removes
+                            propertyKeys.remove(k);
+                        }
+                    }
+                    
+                    if (jsonKeys.size() > 0 || propertyKeys.size() > 0 ) {
+                        throw new BadRequest();
+                    }
+                    
+                    
+                    //second pass, do a write
+                    obj = new JSONObject();
+                    
+                    for(final String k : json.keySet()) {
+                        final Object o = json.get(k);
+                        final Property p = owner.getProperty(k);
+                        p.setValue(o);
+                        
+                        obj.put(k, p.getValue());
+                        
+                    }
+                    
+                    
+                    
                     break;
                 }
 
@@ -177,45 +240,11 @@ public class PropertyHandler  extends BaseHandler{
                 )
             );
             
-        } catch(BadAccess  e) {
-            return corsResponse(
-                NanoHTTPD.newFixedLengthResponse(
-                    NanoHTTPD.Response.Status.BAD_REQUEST,
-                    null,
-                    null
-                )
-            );
-            
-        }
+        } 
     }
     
     
     
-    private JSONObject  readProperty(
-        RouterNanoHTTPD.UriResource uriResource,
-        Map<String, String> urlParams,
-        NanoHTTPD.IHTTPSession session
-    )throws JSONException,BadRequest,BadAccess{
-        final ManagedThingsCollection mti = ManagedThingsCollection.getInstance();
-        final String                path = "/" + uriResource.getUri();
-        final InteractionAffordance ia = mti.getInteraction(path);
-        final String                iName = mti.getInteractionName(path);
-        final ThingObject           owner = mti.getInteractionOwner(path);        
-        
-        JSONObject obj = new JSONObject();
-        
-        final Property   p = owner.getProperty(iName);
-        checkRead(p);
-
-        Object value = (p != null ? p.getValue() : null);
-        if (value == null) {
-            obj.put(iName, JSONObject.NULL);
-        } else {
-            obj.putOpt(iName, value);
-        }
-        
-        return obj;
-    }         
     private void checkRead(Property p ) throws BadAccess {
         if (p.getData().getDataSchema() != null) {
             if (p.getData().getDataSchema().getWriteOnly() == true) {
@@ -233,41 +262,6 @@ public class PropertyHandler  extends BaseHandler{
                 throw new BadAccess();
             }
         }
-        
-    }
-    private void writeProperty(
-        RouterNanoHTTPD.UriResource uriResource,
-        Map<String, String>         urlParams,
-        NanoHTTPD.IHTTPSession      session,
-        JSONObject                  jresp
-            
-    ) throws JSONException,BadRequest,BadAccess {
-        final ManagedThingsCollection mti = ManagedThingsCollection.getInstance();
-        final String                path = "/" + uriResource.getUri();
-        final InteractionAffordance ia = mti.getInteraction(path);
-        final String                iName = mti.getInteractionName(path);
-        final ThingObject           owner = mti.getInteractionOwner(path);
-        
-        JSONObject json = this.parseBody(session);
-        if (json == null) {
-            throw new BadRequest();
-        }
-        
-
-        if (!json.has(iName)) {
-            throw new BadRequest();
-        }
-
-
-
-        final Property p = owner.getProperty(iName);
-        checkWrite(p);
-        
-        p.setValue(json.get(iName));
-
-
-        
-        jresp.putOpt(iName, p.getValue());
         
     }
 }

@@ -8,6 +8,8 @@ package io.webthings.webthing.forms;
 import io.webthings.webthings.Common;
 import static io.webthings.webthings.Common.checkGetter;
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -229,6 +231,78 @@ public class FormTest {
         
         Common.checkFromJSON(Form.class, expVals);
         
+    }
+
+    /**
+     * Test of getOperationList method, of class Form.
+     */
+    @Test
+    public void testGetOperationList() {
+        System.out.println("getOperationList");
+        
+        final List<Operation.id> ops = new ArrayList<>();
+        ops.add(Operation.id.writeproperty);
+        ops.add(Operation.id.readproperty);
+        
+        
+        checkGetter(Form.class, "OperationList", "__ops", ops);
+        
+    }
+
+    /**
+     * Test of setOperationList method, of class Form.
+     */
+    @Test
+    public void testSetOperationList() {
+        System.out.println("setOperationList");
+        List<Operation.id> s = new ArrayList<>();
+        s.add(Operation.id.readproperty);
+        s.add(Operation.id.readallproperties);
+        
+        Common.checkSetter(Form.class, "OperationList", List.class, "__ops", s);
+    }
+
+    /**
+     * Test of setOperation method, of class Form.
+     */
+    @Test
+    public void testSetOperation() {
+        System.out.println("setOperation");
+        Common.checkAddToCollection(Form.class, "setOperation", "__ops", Operation.id.readallproperties);
+
+    }
+
+    /**
+     * Test of addOperation method, of class Form.
+     */
+    @Test
+    public void testAddOperation() {
+        System.out.println("addOperation");
+        
+        System.out.println("setOperation");
+        Common.checkAddToCollection(Form.class, "addOperation", "__ops", Operation.id.readallproperties);
+        
+    }
+
+    /**
+     * Test of getHTTPMethodName method, of class Form.
+     */
+    @Test
+    public void testGetHTTPMethodName() {
+        System.out.println("getHTTPMethodName");
+        // TODO review the generated test code and remove the default call to fail.
+        Common.checkGetter(Form.class, "HTTPMethodName", "__method_name", "PUT");
+        
+    }
+
+    /**
+     * Test of setHTTPMethodName method, of class Form.
+     */
+    @Test
+    public void testSetHTTPMethodName() throws Exception {
+        System.out.println("setHTTPMethodName");
+        Common.checkSetter(Form.class,"HTTPMethodName","__method_name","GET");
+    
     }
     
 }

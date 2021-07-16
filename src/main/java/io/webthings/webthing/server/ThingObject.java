@@ -5,6 +5,7 @@
  */
 package io.webthings.webthing.server;
 
+import io.webthings.webthing.affordances.EventAffordance;
 import io.webthings.webthing.affordances.PropertyAffordance;
 import io.webthings.webthing.common.ThingData;
 import java.util.Map;
@@ -18,6 +19,7 @@ public class  ThingObject {
     private final   ThingData                   __data;
     private final   Map<String,Property>        __properties = new TreeMap<>();
     private final   Map<String,Action>          __actions = new TreeMap<>();
+//    private final   Map<String,Event>           __events  = new TreeMap<>();
     
     
     public ThingObject(ThingData d) {
@@ -28,6 +30,14 @@ public class  ThingObject {
             final PropertyAffordance pa = e.getValue();
             __properties.put(name, new Property(name, pa));
         }
+/*        
+        for(final Map.Entry<String, EventAffordance> e : d.getEvents().entrySet())  {
+            final String name = e.getKey();
+            final EventAffordance pa = e.getValue();
+            __events.put(name, new Event(name, pa,EventHandler.class));
+            
+        }
+*/
     }
     
     
@@ -91,4 +101,22 @@ public class  ThingObject {
     public Map<String,Action> getActions() {
         return __actions;
     }
+    
+/*    
+    public Map<String,Event> getEvents() {
+        return __events;
+    }
+    public void addEvent (Event  p) {
+        __data.addEvent(p.getName(), p.getData());
+        __events.put(p.getName(), p);
+     }
+    
+    public void removeEvent(String s) {
+        __data.removeEvent(s);
+        __events.remove(s);
+    }
+    public Event getEvent(String s) {
+        return __events.get(s);
+    }
+*/     
 }

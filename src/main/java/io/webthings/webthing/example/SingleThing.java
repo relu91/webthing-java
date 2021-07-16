@@ -2,10 +2,12 @@ package io.webthings.webthing.example;
 
 
 import io.webthings.webthing.affordances.ActionAffordance;
+import io.webthings.webthing.affordances.EventAffordance;
 import io.webthings.webthing.affordances.PropertyAffordance;
 import io.webthings.webthing.common.ThingData;
 import io.webthings.webthing.exceptions.WoTException;
 import io.webthings.webthing.forms.Form;
+import io.webthings.webthing.forms.Operation;
 import io.webthings.webthing.server.Action;
 import io.webthings.webthing.server.ActionHandler;
 import io.webthings.webthing.server.ThingObject;
@@ -21,23 +23,57 @@ public class SingleThing {
             System.out.println("Current state : " + __state);
             __state = !__state;
             System.out.println("New  state : " + __state);
+            
+            //fire toggled event
         }
+
     }
+    
+    private static void addProperty(String title,String desc, String href, Operation.id op,ThingData tgt)throws URISyntaxException,WoTException {
+        final PropertyAffordance pa  = new PropertyAffordance();
+        pa.setDefaultTitle(title);
+        pa.setDefaultDescription(desc);
+        final Form f = new Form(href);
+        
+       
+        if (op != null)
+            f.setOperation(op);
+        
+        pa.addForm(f);
+        tgt.addProperty("name", pa);
+        
+    }
+    private static void addMetadataForm(String href, Operation.id op,ThingData tgt)throws URISyntaxException,WoTException {
+        final Form f = new Form(href);
+       
+        if (op != null)
+            f.setOperation(op);
+        
+        tgt.addForm(f);
+        
+        
+    }
+    
     public static List<ThingObject> makeThing() throws URISyntaxException,WoTException{
         final List<ThingObject> ret = new ArrayList<>();
         final ThingData   td = new ThingData();
-        final PropertyAffordance pa_name = new PropertyAffordance();
-        pa_name.setDefaultTitle("Name");
-        pa_name.setDefaultDescription("The real name");
-        pa_name.addForm(new Form("/single/name"));
-        td.addProperty("name", pa_name);
+        addProperty("name","The real name","/single/name",null,td);
+        addMetadataForm("/single/allprops",Operation.id.readallproperties,td);
         
         final ActionAffordance aa_toggle = new ActionAffordance();
         aa_toggle.setDefaultTitle("Toggle");
         aa_toggle.setDefaultDescription("Toggle Action");
-        aa_toggle.addForm(new Form("/single/toggle"));
+        final Form aa_form = new Form("/single/toggle");
+        aa_form.setHTTPMethodName("GET");
+        aa_toggle.addForm(aa_form);
+        
         td.addAction("toggle", aa_toggle);
         
+        final EventAffordance ee_onoff = new EventAffordance();
+        ee_onoff.addForm(new Form("/single/toggled"));
+        ee_onoff.setDefaultTitle("Toggled");
+        ee_onoff.setDefaultDescription("Toggled Action");
+        td.addEvent("toggled", ee_onoff);
         
         
         final ThingObject to = new ThingObject(td);
@@ -62,6 +98,7 @@ public class SingleThing {
             server.start(false);
         } catch (Exception e) {
             System.out.println(e.toString());
+            e.printStackTrace(System.err);
             System.exit(1);
         }
     }

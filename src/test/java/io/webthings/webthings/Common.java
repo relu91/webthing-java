@@ -51,7 +51,7 @@ public class Common {
             return __key.equals(oi.__key);
         }
     }
-    public static void checkSettedField(Object instance, String name, Object value) {
+    private static void checkSettedField(Object instance, String name, Object value) {
         final String FN_NAME = MethodHandles.lookup().lookupClass() + ".checkSettedField(()";
         
         try {
@@ -99,14 +99,61 @@ public class Common {
         
     }
     
-
-    public static <__B,__T> void checkSetter(Class c, String methodBase, String variable, __T value) {
+    public  static <__B, __T,__C extends Collection<__T> > void checkGetterOnCollection(Class c, String methodBase, String variable,  __T value, Class coll) {
         final String FN_NAME = MethodHandles.lookup().lookupClass() + ".checkGetter()";
+        try {
+            final __B pojo = (__B) c.newInstance();
+            final Field field = c.getDeclaredField(variable);
+            field.setAccessible(true);
+            __C realValue = (__C) coll.newInstance();
+            realValue.add(value);
+            
+            field.set(pojo, realValue);
+            
+            final Method m = c.getDeclaredMethod("get" + methodBase);
+            final __T ret = (__T) m.invoke(pojo);
+            
+            assertEquals(ret, value);
+            
+
+        } catch(Exception e ) {
+            System.err.println(FN_NAME  + " : " + e);
+            fail(e.getMessage());
+        }
+        
+    }
+    public static <__B,__T,__C extends Collection<__T> > void checkSetterOnCollection(Class c, String methodBase, String variable, __T value,Class coll) { 
+        final String FN_NAME = MethodHandles.lookup().lookupClass() + ".checkSetter()";
+        try {
+            final __B pojo = (__B) c.newInstance();            
+            final Method m = c.getDeclaredMethod("set" + methodBase,value.getClass());
+
+            m.invoke(pojo, value);
+            
+            final Field field = c.getDeclaredField(variable);
+            field.setAccessible(true);
+            
+            final __C realRes = (__C) field.get(pojo);
+                    
+            final __T res = (__T) (realRes != null && realRes.size() > 0 ? realRes.toArray()[0] : null);
+            
+            assertEquals(value, res);
+            
+            
+        } catch(Exception e ) {
+            System.err.println(FN_NAME  + " : " + e);
+            fail(e.getMessage());
+        }
+        
+    }
+    
+    public static <__B,__T> void checkSetter(Class c, String methodBase, Class methodParam, String variable, __T value) { 
+        final String FN_NAME = MethodHandles.lookup().lookupClass() + ".checkSetter()";
         try {
             final __B pojo = (__B) c.newInstance();            
              
-            final Method m = c.getDeclaredMethod("set" + methodBase,value.getClass());
-            
+            final Method m = c.getDeclaredMethod("set" + methodBase,methodParam);
+
             m.invoke(pojo, value);
             
             final Field field = c.getDeclaredField(variable);
@@ -120,7 +167,10 @@ public class Common {
             System.err.println(FN_NAME  + " : " + e);
             fail(e.getMessage());
         }
-
+        
+    }
+    public static <__B,__T> void checkSetter(Class c, String methodBase, String variable, __T value) {
+        checkSetter(c, methodBase, value.getClass(), variable, value);
     }
     
     public static <__B, __T> void checkAddToCollection(Class c, String methodName, String variable, __T value) {

@@ -203,11 +203,28 @@ public class Form extends JSONEntity{
         return __ops;
     }
     
+    public void setOperationList(List<Operation.id> l ) {
+        __ops = l;
+    }
+    public void setOperation(Operation.id i ) {
+        __ops = new ArrayList<>();
+        __ops.add(i);
+    }
+    public void addOperation(Operation.id i ) {
+        if (__ops == null)
+            setOperation(i);
+        else
+            __ops.add(i);
+    }
     public String getHTTPMethodName() {
         return __method_name;
     }
     
+    
+    
     public void setHTTPMethodName(String s ) throws InvalidFieldException{
+        if (s == null)
+            return;
         switch(s) {
             case "GET":
             case "POST":

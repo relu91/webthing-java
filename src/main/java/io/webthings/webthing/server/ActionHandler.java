@@ -9,6 +9,8 @@ import fi.iki.elonen.NanoHTTPD;
 import fi.iki.elonen.router.RouterNanoHTTPD;
 import io.webthings.webthing.affordances.InteractionAffordance;
 import io.webthings.webthing.forms.Form;
+import io.webthings.webthing.forms.Operation;
+import java.util.List;
 import java.util.Map;
 import org.json.JSONObject;
 
@@ -18,6 +20,7 @@ import org.json.JSONObject;
  */
 public abstract class ActionHandler extends BaseHandler implements Runnable{
    protected    JSONObject  __request_body = null;
+   protected    ThingObject __owner;
     @Override
    public NanoHTTPD.Response get(
         RouterNanoHTTPD.UriResource uriResource,
@@ -63,6 +66,7 @@ public abstract class ActionHandler extends BaseHandler implements Runnable{
         final InteractionAffordance ia = mti.getInteraction(path);
         final String                iName = mti.getInteractionName(path);
         final ThingObject           owner = mti.getInteractionOwner(path);
+        __owner = owner;
         
         
         if (ia == null || iName == null || owner == null) {
@@ -74,22 +78,36 @@ public abstract class ActionHandler extends BaseHandler implements Runnable{
         }
 
         //check method
+        boolean fCheck = false;
+        Operation.id    opid = null;
+
         for(final Form f : ia.getForms()) {
             //find which form was called
             final String fPath = f.getHref().toString();
             if (fPath.equals(path)) {
+                String formMethod = "POST";
                 if (f.getHTTPMethodName() != null) {
-                    if (f.getHTTPMethodName().equals(method) == false ) {
-                        return NanoHTTPD.newFixedLengthResponse(
-                            NanoHTTPD.Response.Status.BAD_REQUEST,
-                            null,
-                            null
-                        );
-                        
-                    }
+                    formMethod = f.getHTTPMethodName();
+                } 
+                
+                if (formMethod.equals(method) == true ) {
+                    fCheck = true;
+                    final List<Operation.id> oplist = f.getOperationList();
+                    opid = oplist != null && oplist.size() > 0  ? f.getOperationList().get(0) : Operation.id.invokeaction;
+                    break;
                 }
+                
             }
         }
+
+        if (fCheck == false) {
+            return NanoHTTPD.newFixedLengthResponse(
+                NanoHTTPD.Response.Status.BAD_REQUEST,
+                null,
+                null
+            );
+        }
+        
         //parse body (if any)
         try {
             __request_body = this.parseBody(session);
