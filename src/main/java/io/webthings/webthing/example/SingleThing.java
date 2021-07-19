@@ -4,6 +4,7 @@ package io.webthings.webthing.example;
 import io.webthings.webthing.affordances.ActionAffordance;
 import io.webthings.webthing.affordances.EventAffordance;
 import io.webthings.webthing.affordances.PropertyAffordance;
+import io.webthings.webthing.common.SecurityScheme;
 import io.webthings.webthing.common.ThingData;
 import io.webthings.webthing.exceptions.WoTException;
 import io.webthings.webthing.forms.Form;
@@ -57,7 +58,7 @@ public class SingleThing {
     public static List<ThingObject> makeThing() throws URISyntaxException,WoTException{
         final List<ThingObject> ret = new ArrayList<>();
         final ThingData   td = new ThingData();
-        addProperty("name","The real name","/single/name",null,td);
+        addProperty("name","The real name","/single/name",Operation.id.readproperty,td);
         addMetadataForm("/single/allprops",Operation.id.readallproperties,td);
         
         final ActionAffordance aa_toggle = new ActionAffordance();
@@ -75,6 +76,11 @@ public class SingleThing {
         ee_onoff.setDefaultDescription("Toggled Action");
         td.addEvent("toggled", ee_onoff);
         
+        td.addSecurity("basic_sc");
+        final SecurityScheme sc = SecurityScheme.newInstance(SecurityScheme.typeId.siBasic);
+        sc.setType("basic");
+        sc.setDefaultDescription("Basic Security");
+        td.addSecurityDefinition("basic_sc", sc);
         
         final ThingObject to = new ThingObject(td);
         to.addAction(new Action("toggle",aa_toggle,ToggleHandler.class));

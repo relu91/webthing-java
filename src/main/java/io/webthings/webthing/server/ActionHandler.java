@@ -8,8 +8,10 @@ package io.webthings.webthing.server;
 import fi.iki.elonen.NanoHTTPD;
 import fi.iki.elonen.router.RouterNanoHTTPD;
 import io.webthings.webthing.affordances.InteractionAffordance;
+import io.webthings.webthing.exceptions.WoTException;
 import io.webthings.webthing.forms.Form;
 import io.webthings.webthing.forms.Operation;
+import io.webthings.webthing.server.securityHandlers.exceptions.RequireAuthenticationException;
 import java.util.List;
 import java.util.Map;
 import org.json.JSONObject;
@@ -61,6 +63,8 @@ public abstract class ActionHandler extends BaseHandler implements Runnable{
             );
         }
         
+        //check security
+        
         final ManagedThingsCollection mti = ManagedThingsCollection.getInstance();
         final String                path = "/" +  uriResource.getUri();
         final InteractionAffordance ia = mti.getInteraction(path);
@@ -69,6 +73,7 @@ public abstract class ActionHandler extends BaseHandler implements Runnable{
         __owner = owner;
         
         
+            
         if (ia == null || iName == null || owner == null) {
             return corsResponse(NanoHTTPD.newFixedLengthResponse(
                     NanoHTTPD.Response.Status.NOT_FOUND,
@@ -80,6 +85,7 @@ public abstract class ActionHandler extends BaseHandler implements Runnable{
         //check method
         boolean fCheck = false;
         Operation.id    opid = null;
+        Form            thisForm = null;
 
         for(final Form f : ia.getForms()) {
             //find which form was called
@@ -94,6 +100,7 @@ public abstract class ActionHandler extends BaseHandler implements Runnable{
                     fCheck = true;
                     final List<Operation.id> oplist = f.getOperationList();
                     opid = oplist != null && oplist.size() > 0  ? f.getOperationList().get(0) : Operation.id.invokeaction;
+                    thisForm = f;
                     break;
                 }
                 
@@ -107,7 +114,33 @@ public abstract class ActionHandler extends BaseHandler implements Runnable{
                 null
             );
         }
-        
+        try {
+            if (SecurityHandler.checkAccess(owner.getData(), thisForm, session) == false )  {
+                return NanoHTTPD.newFixedLengthResponse(
+                    NanoHTTPD.Response.Status.UNAUTHORIZED,
+                    null,
+                    null
+                );
+
+            }
+        } catch(RequireAuthenticationException re) {
+            final NanoHTTPD.Response resp = NanoHTTPD.newFixedLengthResponse(
+                NanoHTTPD.Response.Status.UNAUTHORIZED,
+                null,
+                null
+            );
+            
+            resp.addHeader("WWW-Authenticate", re.getHeaderContent());
+            return resp;
+            
+        } catch(WoTException we ) {
+            return NanoHTTPD.newFixedLengthResponse(
+                NanoHTTPD.Response.Status.INTERNAL_ERROR,
+                null,
+                null
+            );
+            
+        }
         //parse body (if any)
         try {
             __request_body = this.parseBody(session);

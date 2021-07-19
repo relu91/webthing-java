@@ -8,8 +8,10 @@ package io.webthings.webthing.server;
 import fi.iki.elonen.NanoHTTPD;
 import fi.iki.elonen.router.RouterNanoHTTPD;
 import io.webthings.webthing.affordances.InteractionAffordance;
+import io.webthings.webthing.exceptions.WoTException;
 import io.webthings.webthing.forms.Form;
 import io.webthings.webthing.forms.Operation;
+import io.webthings.webthing.server.securityHandlers.exceptions.RequireAuthenticationException;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -101,6 +103,7 @@ public class PropertyHandler  extends BaseHandler{
         //look through forms to find what the hell is he asking for
         Operation.id        thisOp = null;
         boolean             found  = false;
+        Form                thisForm = null;
         for(final Form f : ia.getForms()) {
             final String thisPath = f.getHref().toString();
             String thisMethod = f.getHTTPMethodName();
@@ -120,6 +123,7 @@ public class PropertyHandler  extends BaseHandler{
                         
                         if (methodName.equals(thisMethod)) {
                             found = true;
+                            thisForm = f;
                             break;
                         }
                     }
@@ -134,6 +138,34 @@ public class PropertyHandler  extends BaseHandler{
                 null,
                 null
             );
+        }
+        
+        try {
+            if (SecurityHandler.checkAccess(owner.getData(), thisForm, session) == false )  {
+                return NanoHTTPD.newFixedLengthResponse(
+                    NanoHTTPD.Response.Status.UNAUTHORIZED,
+                    null,
+                    null
+                );
+
+            }
+        } catch(RequireAuthenticationException re) {
+            final NanoHTTPD.Response resp = NanoHTTPD.newFixedLengthResponse(
+                NanoHTTPD.Response.Status.UNAUTHORIZED,
+                null,
+                null
+            );
+            
+            resp.addHeader("WWW-Authenticate", re.getHeaderContent());
+            return resp;
+            
+        } catch(WoTException we ) {
+            return NanoHTTPD.newFixedLengthResponse(
+                NanoHTTPD.Response.Status.INTERNAL_ERROR,
+                null,
+                null
+            );
+            
         }
 
         try {

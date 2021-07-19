@@ -13,6 +13,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.TreeSet;
 import org.json.JSONObject;
 import static org.junit.Assert.assertEquals;
@@ -100,7 +101,7 @@ public class Common {
     }
     
     public  static <__B, __T,__C extends Collection<__T> > void checkGetterOnCollection(Class c, String methodBase, String variable,  __T value, Class coll) {
-        final String FN_NAME = MethodHandles.lookup().lookupClass() + ".checkGetter()";
+        final String FN_NAME = MethodHandles.lookup().lookupClass() + ".checkGetterOnCollection()";
         try {
             final __B pojo = (__B) c.newInstance();
             final Field field = c.getDeclaredField(variable);
@@ -122,6 +123,30 @@ public class Common {
         }
         
     }
+    public  static <__B, __T> void checkGetterOnMap(Class c, String methodBase, String variable,  String key,__T value) {
+        final String FN_NAME = MethodHandles.lookup().lookupClass() + ".checkGetterOnCollection()";
+        try {
+            final __B pojo = (__B) c.newInstance();
+            final Field field = c.getDeclaredField(variable);
+            field.setAccessible(true);
+            Map<String,__T> realValue = new TreeMap<>();
+            realValue.put(key,value);
+            
+            field.set(pojo, realValue);
+            
+            final Method m = c.getDeclaredMethod("get" + methodBase,String.class);
+            final __T ret = (__T) m.invoke(pojo,key);
+            
+            assertEquals(ret, value);
+            
+
+        } catch(Exception e ) {
+            System.err.println(FN_NAME  + " : " + e);
+            fail(e.getMessage());
+        }
+        
+    }
+    
     public static <__B,__T,__C extends Collection<__T> > void checkSetterOnCollection(Class c, String methodBase, String variable, __T value,Class coll) { 
         final String FN_NAME = MethodHandles.lookup().lookupClass() + ".checkSetter()";
         try {
@@ -207,9 +232,43 @@ public class Common {
             
         
     }
+    public static <__B, __T> void checkAddToCollection(Class c, String methodName, String variable, String key, __T value) {
+        final String FN_NAME = MethodHandles.lookup().lookupClass() + ".checkAddToCollection()";
+        
+        try {
+            
+            final __B pojo = (__B) c.newInstance();     
+            
+            
+            final Field field = c.getDeclaredField(variable);
+            field.setAccessible(true);
+
+            final Map<String,__T>  res_before = (Map<String,__T>) field.get(pojo);
+            final int count_before = (res_before == null ? 0 : res_before.size());
+            
+            final Method m = c.getDeclaredMethod(methodName, String.class, value.getClass());
+            m.invoke(pojo, key,value);
+            
+            final Map<String,__T> res_after = (Map<String,__T>) field.get(pojo);
+            
+            final int count_after = (res_after == null ? 0 : res_after.size());
+            
+            assertEquals("Collection size not incremented !",count_before, count_after-1);
+            assertTrue("Value not added to collection",res_after != null && res_after.containsKey(key) && res_after.get(key).equals(value));
+            
+            
+            
+            
+        } catch(Exception e ) {
+            System.err.println(FN_NAME  + " : " + e);
+            fail(e.getMessage());
+        }
+            
+        
+    }
     
     public static <__B, __T> void checkRemoveFromCollection(Class c, String methodName, String variable, __T value) {
-        final String FN_NAME = MethodHandles.lookup().lookupClass() + ".checkGetter()";
+        final String FN_NAME = MethodHandles.lookup().lookupClass() + ".checkRemoveFromCollection()";
         
         try {
             
@@ -252,6 +311,49 @@ public class Common {
             
             assertEquals("Collection size not decremented !",count_before, count_after+1);
             assertFalse("Value not still in collection",res_after != null && res_after.contains(value));
+            
+            
+            
+            
+        } catch(Exception e ) {
+            System.err.println(FN_NAME  + " : " + e);
+            fail(e.getMessage());
+        }
+            
+        
+    }
+    public static <__B, __T> void checkRemoveFromCollection(Class c, String methodName, String variable,String key, __T value) {
+        final String FN_NAME = MethodHandles.lookup().lookupClass() + ".checkRemoveFromCollection()";
+        
+        try {
+            
+            final __B pojo = (__B) c.newInstance();     
+            
+            
+            final Field field = c.getDeclaredField(variable);
+            field.setAccessible(true);
+
+            Map<String,__T>  res_before = (Map<String,__T>) field.get(pojo);
+            
+            if (res_before == null) {
+                res_before = new TreeMap<>();
+                field.set(pojo, res_before);
+            } 
+            
+            res_before.put(key,value);
+            final int count_before = (res_before == null ? 0 : res_before.size());
+            
+            
+            final Method m = c.getDeclaredMethod(methodName, String.class);
+            m.invoke(pojo, key);
+            
+            final Map<String,__T>  res_after = (Map<String,__T>) field.get(pojo);
+            
+            
+            final int count_after = (res_after == null ? 0 : res_after.size());
+            
+            assertEquals("Collection size not decremented !",count_before, count_after+1);
+            assertFalse("Value not still in collection",res_after != null && res_after.containsKey(key));
             
             
             

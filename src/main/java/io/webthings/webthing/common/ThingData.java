@@ -16,7 +16,9 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
+import java.util.TreeSet;
 import org.json.JSONObject;
 
 /**
@@ -41,7 +43,7 @@ public class ThingData extends JSONEntity {
     private List<Link>                          __links;
     private List<Form>                          __forms;
     
-    private List<String>                        __security;
+    private Set<String>                         __security;
     private Map<String,SecurityScheme>          __securityDefinitions;
     
     
@@ -270,9 +272,10 @@ public class ThingData extends JSONEntity {
     }
     
     public void setSecurity(String t) {
-        __security = new ArrayList<>();
+        __security = new TreeSet<>();
         __security.add(t);
     }
+/*    
     public String getSecurity() {
         String ret = null;
         if (__security != null && __security.size() >= 1) {
@@ -280,8 +283,8 @@ public class ThingData extends JSONEntity {
         }
         return ret;
     }
-    
-    public List<String> getSecuritys() {
+*/    
+    public Set<String> getSecurities() {
         return  __security;
     }
     public void addSecurity(String t) {
@@ -386,7 +389,7 @@ public class ThingData extends JSONEntity {
         __events = JSONEntityHelpers.readEntityMap(o, "events", EventAffordance.class, TreeMap.class);
         __properties = JSONEntityHelpers.readEntityMap(o, "properties", PropertyAffordance.class, TreeMap.class);
         
-        __security = JSONEntityHelpers.readObjectSingleOrList(o, "security", String.class, ArrayList.class);
+        __security = JSONEntityHelpers.readObjectSingleOrList(o, "security", String.class, TreeSet.class);
          __securityDefinitions = JSONEntityHelpers.readEntityMap(o, "securityDefinitions",SecurityScheme.class, TreeMap.class);
          
         

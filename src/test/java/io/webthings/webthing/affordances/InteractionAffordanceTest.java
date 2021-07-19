@@ -112,12 +112,8 @@ public class InteractionAffordanceTest {
     @Test
     public void testSetI18NTitle() {
         System.out.println("setI18NTitle");
-        String lang = "";
-        String t = "";
-        InteractionAffordance instance = new InteractionAffordance();
-        instance.setI18NTitle(lang, t);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        Common.checkAddToCollection(InteractionAffordance.class, "setI18NTitle", "__titles", "EN", "A title");
+        
     }
 
     /**
@@ -126,13 +122,7 @@ public class InteractionAffordanceTest {
     @Test
     public void testGetI18NTitle() {
         System.out.println("getI18NTitle");
-        String lang = "";
-        InteractionAffordance instance = new InteractionAffordance();
-        String expResult = "";
-        String result = instance.getI18NTitle(lang);
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        Common.checkGetterOnMap(InteractionAffordance.class, "I18NTitle", "__titles", "IT", "A title");
     }
 
     /**
@@ -141,11 +131,7 @@ public class InteractionAffordanceTest {
     @Test
     public void testRemoveI18NTitle() {
         System.out.println("removeI18NTitle");
-        String lang = "";
-        InteractionAffordance instance = new InteractionAffordance();
-        instance.removeI18NTitle(lang);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        Common.checkRemoveFromCollection(InteractionAffordance.class, "removeI18NTitle", "__titles", "IT", "Un titolo");
     }
 
     /**
@@ -154,11 +140,7 @@ public class InteractionAffordanceTest {
     @Test
     public void testSetDefaultDescription() {
         System.out.println("setDefaultDescription");
-        String d = "";
-        InteractionAffordance instance = new InteractionAffordance();
-        instance.setDefaultDescription(d);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        Common.checkSetter(InteractionAffordance.class, "DefaultDescription", "__description", "A description");
     }
 
     /**
@@ -167,12 +149,7 @@ public class InteractionAffordanceTest {
     @Test
     public void testGetDefaultDescription() {
         System.out.println("getDefaultDescription");
-        InteractionAffordance instance = new InteractionAffordance();
-        String expResult = "";
-        String result = instance.getDefaultDescription();
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        Common.checkGetter(InteractionAffordance.class, "DefaultDescription", "__description", "A description");    
     }
 
     /**
@@ -181,12 +158,7 @@ public class InteractionAffordanceTest {
     @Test
     public void testSetI18NDescription() {
         System.out.println("setI18NDescription");
-        String lang = "";
-        String d = "";
-        InteractionAffordance instance = new InteractionAffordance();
-        instance.setI18NDescription(lang, d);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        Common.checkAddToCollection(InteractionAffordance.class, "setI18NDescription", "__descriptions", "EN", "A description");
     }
 
     /**
@@ -195,13 +167,7 @@ public class InteractionAffordanceTest {
     @Test
     public void testGetI18NDescription() {
         System.out.println("getI18NDescription");
-        String lang = "";
-        InteractionAffordance instance = new InteractionAffordance();
-        String expResult = "";
-        String result = instance.getI18NDescription(lang);
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        Common.checkGetterOnMap(InteractionAffordance.class, "I18NDescription", "__descriptions", "IT", "A descriptions"); 
     }
 
     /**
@@ -210,11 +176,7 @@ public class InteractionAffordanceTest {
     @Test
     public void testRemoveI18NDescription() {
         System.out.println("removeI18NDescription");
-        String lang = "";
-        InteractionAffordance instance = new InteractionAffordance();
-        instance.removeI18NDescription(lang);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        Common.checkRemoveFromCollection(InteractionAffordance.class, "removeI18NDescription", "__descriptions", "IT", "Una descrizione");
     }
 
     /**

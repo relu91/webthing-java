@@ -159,9 +159,16 @@ public class JSONEntityHelpers {
             if (o != null) {
                 ret = ccls.newInstance();
                 for(final String key : o.keySet()) {
-                    final JSONObject child = o.getJSONObject(key);
-                    final __T        retType = (__T) cls.newInstance().fromJSON(child);
-                    ret.put(key, retType);
+                    if (cls.isInstance(SecurityScheme.class ) == false ) {
+                        final JSONObject child = o.getJSONObject(key);
+                        final __T        retType = (__T) cls.newInstance().fromJSON(child);
+                        ret.put(key, retType);
+                    } else {
+                        final JSONObject child = o.getJSONObject(key);
+                        final __T        retType = (__T) SecurityScheme.newInstance(o);
+                        ret.put(key, retType);
+                        
+                    }
                     
                 }
                 
