@@ -6,16 +6,20 @@
 package io.webthings.webthing.server;
 
 import fi.iki.elonen.NanoHTTPD;
+import static fi.iki.elonen.NanoHTTPD.newFixedLengthResponse;
+import fi.iki.elonen.NanoWSD;
 import fi.iki.elonen.router.RouterNanoHTTPD;
 import io.webthings.webthing.affordances.InteractionAffordance;
 import io.webthings.webthing.exceptions.WoTException;
 import io.webthings.webthing.forms.Form;
 import io.webthings.webthing.forms.Operation;
 import io.webthings.webthing.server.securityHandlers.exceptions.RequireAuthenticationException;
+import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.Timer;
+import java.util.TimerTask;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -40,6 +44,81 @@ public class PropertyHandler  extends BaseHandler{
         Map<String, String> urlParams,
         NanoHTTPD.IHTTPSession session
     ) {
+        //handles websocket for observer/unobserver property
+            Map<String, String> headers = session.getHeaders();
+            if (isWebSocketRequested(session)) {
+                if (!NanoWSD.HEADER_WEBSOCKET_VERSION_VALUE.equalsIgnoreCase(
+                        headers.get(NanoWSD.HEADER_WEBSOCKET_VERSION))) {
+                    return corsResponse(
+                            newFixedLengthResponse(
+                                NanoHTTPD.Response.Status.BAD_REQUEST,
+                                NanoHTTPD.MIME_PLAINTEXT,
+                                "Invalid Websocket-Version " +
+                                headers.get(NanoWSD.HEADER_WEBSOCKET_VERSION)
+                        )
+                    );
+                }
+
+                if (!headers.containsKey(NanoWSD.HEADER_WEBSOCKET_KEY)) {
+                    return corsResponse(
+                        newFixedLengthResponse(
+                            NanoHTTPD.Response.Status.BAD_REQUEST,
+                            NanoHTTPD.MIME_PLAINTEXT,
+                            "Missing Websocket-Key"
+                        )
+                    );
+                }
+
+                final String                path = "/" +  uriResource.getUri();
+                final NanoWSD.WebSocket webSocket = new ThingWebSocket(session,true,path);
+                
+                NanoHTTPD.Response handshakeResponse = webSocket.getHandshakeResponse();
+                try {
+                    handshakeResponse.addHeader(
+                        NanoWSD.HEADER_WEBSOCKET_ACCEPT,
+                        NanoWSD.makeAcceptKey(
+                            headers.get(
+                            NanoWSD.HEADER_WEBSOCKET_KEY
+                            )
+                        )
+                    );
+                } catch (NoSuchAlgorithmException e) {
+                    return corsResponse(
+                        newFixedLengthResponse(
+                            NanoHTTPD.Response.Status.INTERNAL_ERROR,
+                            NanoHTTPD.MIME_PLAINTEXT,
+                            "The SHA-1 Algorithm required for websockets is not available on the server."
+                        )
+                    );
+                }
+
+                if (headers.containsKey(NanoWSD.HEADER_WEBSOCKET_PROTOCOL)) {
+                    handshakeResponse.addHeader(
+                        NanoWSD.HEADER_WEBSOCKET_PROTOCOL,
+                        headers.get(NanoWSD.HEADER_WEBSOCKET_PROTOCOL).split(",")[0]
+                    );
+                }
+
+                final Timer timer = new Timer();
+                timer.scheduleAtFixedRate(
+                    new TimerTask() {
+                        @Override
+                        public void run() {
+                            try {
+                                webSocket.ping(new byte[0]);
+                            } catch (IOException e) {
+                                timer.cancel();
+                            }
+                        }
+                    },
+                    WEBSOCKET_PING_INTERVAL,
+                    WEBSOCKET_PING_INTERVAL
+                );
+
+                return handshakeResponse;
+            }
+        
+        
         
         return handleProperty(uriResource, urlParams, session, "GET");
     }

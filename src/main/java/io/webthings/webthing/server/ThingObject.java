@@ -19,7 +19,7 @@ public class  ThingObject {
     private final   ThingData                   __data;
     private final   Map<String,Property>        __properties = new TreeMap<>();
     private final   Map<String,Action>          __actions = new TreeMap<>();
-//    private final   Map<String,Event>           __events  = new TreeMap<>();
+    private final   Map<String,Event>           __events  = new TreeMap<>();
     
     
     public ThingObject(ThingData d) {
@@ -102,7 +102,7 @@ public class  ThingObject {
         return __actions;
     }
     
-/*    
+    
     public Map<String,Event> getEvents() {
         return __events;
     }
@@ -118,5 +118,5 @@ public class  ThingObject {
     public Event getEvent(String s) {
         return __events.get(s);
     }
-*/     
+     
 }

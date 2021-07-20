@@ -6,6 +6,7 @@
 package io.webthings.webthing.server;
 
 import fi.iki.elonen.NanoHTTPD;
+import fi.iki.elonen.NanoWSD;
 import fi.iki.elonen.router.RouterNanoHTTPD;
 import java.io.IOException;
 import java.util.List;
@@ -17,6 +18,7 @@ import org.json.JSONObject;
  * @author Lorenzo
  */
 public class BaseHandler implements RouterNanoHTTPD.UriResponder {
+        protected static final int WEBSOCKET_PING_INTERVAL = 20 * 1000;
         /**
          * Add necessary CORS headers to response.
          *
@@ -170,5 +172,22 @@ public class BaseHandler implements RouterNanoHTTPD.UriResponder {
         public boolean isSecure(RouterNanoHTTPD.UriResource uriResource) {
             return uriResource.initParameter(2, Boolean.class);
         }
+        
+        protected boolean isWebSocketConnectionHeader(Map<String, String> headers) {
+            String connection = headers.get(NanoWSD.HEADER_CONNECTION);
+            return connection != null && connection.toLowerCase()
+                                                   .contains(NanoWSD.HEADER_CONNECTION_VALUE
+                                                                     .toLowerCase());
+        }
+        
+        protected boolean isWebSocketRequested(NanoHTTPD.IHTTPSession session) {
+            Map<String, String> headers = session.getHeaders();
+            String upgrade = headers.get(NanoWSD.HEADER_UPGRADE);
+            boolean isCorrectConnection = isWebSocketConnectionHeader(headers);
+            boolean isUpgrade =
+                    NanoWSD.HEADER_UPGRADE_VALUE.equalsIgnoreCase(upgrade);
+            return isUpgrade && isCorrectConnection;
+        }
+        
     }
 

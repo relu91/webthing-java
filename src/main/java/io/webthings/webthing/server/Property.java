@@ -5,17 +5,23 @@
  */
 package io.webthings.webthing.server;
 
+import fi.iki.elonen.NanoWSD;
 import io.webthings.webthing.affordances.PropertyAffordance;
+import java.util.ArrayList;
+import java.util.List;
+import org.json.JSONObject;
 
 /**
  *
  * @author Lorenzo
  */
-public class Property {
+public class Property implements IObservable {
     private final PropertyAffordance    __prop_def;
     private Object                      __value;
     private String                      __name;
     private Class                       __handler;
+    private List<NanoWSD.WebSocket>     __subscribers = new ArrayList<>();
+    
     
     public Property(String name,String desc, String type,Object value) {
         __value = value;
@@ -44,6 +50,24 @@ public class Property {
     
     public void setValue(Object v ) {
         __value = v;
+        //notify all subscribers
+        final JSONObject o = new JSONObject();
+        o.put(__name, __value);
+        final String s = o.toString();
+        
+        List<NanoWSD.WebSocket> deadOnes = new ArrayList<>();
+        
+        for(final NanoWSD.WebSocket x : __subscribers) {
+            try {
+                x.send(s);
+            } catch(Exception e ) {
+                deadOnes.add(x);
+            }
+        }
+        
+        for(final NanoWSD.WebSocket x: deadOnes) {
+            removeSubscriber(x);
+        }
     }
     
     public String getName() {
@@ -60,6 +84,21 @@ public class Property {
     
     public void setHandler(Class c ) {
         __handler = c;
+    }
+
+    @Override
+    public void addSuscriber(NanoWSD.WebSocket ws) {
+        __subscribers.add(ws);
+    }
+
+    @Override
+    public void removeSubscriber(NanoWSD.WebSocket ws) {
+        __subscribers.remove(ws);
+    }
+
+    @Override
+    public List<NanoWSD.WebSocket> getSubscribers() {
+        return __subscribers;
     }
     
 }
