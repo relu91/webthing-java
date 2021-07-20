@@ -30,14 +30,7 @@ public class  ThingObject {
             final PropertyAffordance pa = e.getValue();
             __properties.put(name, new Property(name, pa));
         }
-/*        
-        for(final Map.Entry<String, EventAffordance> e : d.getEvents().entrySet())  {
-            final String name = e.getKey();
-            final EventAffordance pa = e.getValue();
-            __events.put(name, new Event(name, pa,EventHandler.class));
-            
-        }
-*/
+        
     }
     
     

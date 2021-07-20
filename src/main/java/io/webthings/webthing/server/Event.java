@@ -10,12 +10,13 @@ import io.webthings.webthing.affordances.EventAffordance;
 import io.webthings.webthing.affordances.EventAffordance;
 import java.util.ArrayList;
 import java.util.List;
+import org.json.JSONObject;
 
 /**
  *
  * @author Lorenzo
  */
-public class Event implements IObservable , INotifiable{
+public abstract class Event implements IObservable , INotifiable{
     private final EventAffordance       __evt_def;
     private String                      __name;
     private Class                       __handler;
@@ -77,9 +78,13 @@ public class Event implements IObservable , INotifiable{
     @Override
     public void notifyEvent() {
         final List<NanoWSD.WebSocket>   deadOnes = new ArrayList<>();
+        final JSONObject o = makeEventData();
+        final String s = o.toString();
+        
         for(final NanoWSD.WebSocket x : __subscribers)  {
             try {
                 //do something
+                x.send(s);
             } catch(Exception e ) {
                 deadOnes.add(x);
             }
@@ -90,4 +95,5 @@ public class Event implements IObservable , INotifiable{
         }
     }
     
+    protected abstract JSONObject   makeEventData();
 }

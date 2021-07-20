@@ -77,7 +77,7 @@ public class ManagedThingsCollection {
         //loadMap(to,td.getEvents(), sBaseURI,__events_urls);
         loadMap(new PropertyHandlerGetter(), to,td.getProperties(), sBaseURI,__properties_urls);
         
-//        loadMap(new EventHandlerGetter(), to,td.getEvents(), sBaseURI, __events_urls);
+        loadMap(new EventHandlerGetter(), to,td.getEvents(), sBaseURI, __events_urls);
         
 
         //load root level forms
@@ -156,7 +156,7 @@ public class ManagedThingsCollection {
         }
         
     }
-/*    
+    
     private class EventHandlerGetter implements HandlerGetter {
         @Override
         public Class   getHandler(ThingObject to, String name) {
@@ -165,7 +165,7 @@ public class ManagedThingsCollection {
         }
         
     }
-*/    
+   
     
     private String addForm(Form f,Class handler,Map<String,Class> storedURLs) {
         final java.net.URI u = f.getHref();
