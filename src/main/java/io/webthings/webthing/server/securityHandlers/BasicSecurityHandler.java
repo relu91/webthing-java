@@ -6,6 +6,7 @@
 package io.webthings.webthing.server.securityHandlers;
 
 import fi.iki.elonen.NanoHTTPD;
+import io.webthings.webthing.common.SecurityScheme;
 import io.webthings.webthing.exceptions.WoTException;
 import io.webthings.webthing.server.SecurityHandler;
 import io.webthings.webthing.server.securityHandlers.exceptions.InvalidSecurityException;
@@ -29,7 +30,7 @@ public class BasicSecurityHandler extends SecurityHandler{
         __auth_string   = Base64.getEncoder().encodeToString(  (__user_name + ":" + __pwd).getBytes());
     }
     @Override
-    public boolean doSecurityCheck(NanoHTTPD.IHTTPSession session) throws WoTException {
+    public boolean doSecurityCheck(SecurityScheme sc,NanoHTTPD.IHTTPSession session) throws WoTException {
         final String sHeader = findHeader("authorization", session);
         if (sHeader == null)
             throw new RequireAuthenticationException("Basic : realm=\"Needs user and pwd \"");

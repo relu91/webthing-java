@@ -24,7 +24,7 @@ import java.util.Set;
  */
 public abstract class SecurityHandler {
     
-    public abstract boolean doSecurityCheck(NanoHTTPD.IHTTPSession  session) throws WoTException;
+    public abstract boolean doSecurityCheck(SecurityScheme sc,NanoHTTPD.IHTTPSession  session) throws WoTException;
     
     public static boolean checkAccess (
         ThingData                   td,
@@ -45,7 +45,9 @@ public abstract class SecurityHandler {
             boolean ret = true;
             for(final String name : securityNames) {
                 final SecurityHandler sh = SecurityHandler.newInstance(name, td);
-                ret = ret && sh.doSecurityCheck(session);
+                final SecurityScheme  sc = td.getSecurityDefinitions().get(name);
+                
+                ret = ret && sh.doSecurityCheck(sc,session);
             }
             return ret;
         } catch(InvalidSecurityException e ) {
