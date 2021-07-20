@@ -11,13 +11,33 @@ import io.webthings.webthing.forms.Form;
 import io.webthings.webthing.forms.Operation;
 import io.webthings.webthing.server.Action;
 import io.webthings.webthing.server.ActionHandler;
+import io.webthings.webthing.server.Event;
 import io.webthings.webthing.server.ThingObject;
 import io.webthings.webthing.server.ThingServer;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
+import org.json.JSONObject;
 
 public class SingleThing {
+    public static class ToggleEvent extends Event {
+        public ToggleEvent(String name, EventAffordance p) {
+            super(name, p);
+        }
+        public ToggleEvent(String name, EventAffordance p,Class h) {
+            super(name, p, h);
+
+        }
+
+        @Override
+        protected JSONObject makeEventData() {
+            final JSONObject ret = new JSONObject();
+            ret.put("toggled", "Changed state !!");
+            
+            return ret;
+        }
+        
+    }
     public static class ToggleHandler extends ActionHandler {
         private boolean  __state = false;
         public void run() {
@@ -26,6 +46,10 @@ public class SingleThing {
             System.out.println("New  state : " + __state);
             
             //fire toggled event
+            final Event e = __owner.getEvent("toggled");
+            if (e != null)
+                e.notifyEvent();
+            
         }
 
     }
@@ -84,6 +108,7 @@ public class SingleThing {
         
         final ThingObject to = new ThingObject(td);
         to.addAction(new Action("toggle",aa_toggle,ToggleHandler.class));
+        to.addEvent(new ToggleEvent("toggled",ee_onoff));
         
         ret.add(to);
         return ret;
