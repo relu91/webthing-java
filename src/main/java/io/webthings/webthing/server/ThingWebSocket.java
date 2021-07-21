@@ -85,20 +85,23 @@ public class ThingWebSocket extends NanoWSD.WebSocket {
      */
     @Override
     protected void onMessage(NanoWSD.WebSocketFrame message) {
-        message.setUnmasked();
-        String data = message.getTextPayload();
-        JSONObject json = new JSONObject(data);
-        if (json != null && json.has("type")) {
-            final String type = json.getString("type");
-            if (type.equals("unobserveproperty") || type.equals("unsubscribeevent")) {
-                final IObservable tgt = findObservable();
-                if (tgt != null) {
-                    tgt.removeSubscriber(this);
+        try {
+            message.setUnmasked();
+            String data = message.getTextPayload();
+            JSONObject json = new JSONObject(data);
+            if (json != null && json.has("type")) {
+                final String type = json.getString("type");
+                if (type.equals("unobserveproperty") || type.equals("unsubscribeevent")) {
+                    final IObservable tgt = findObservable();
+                    if (tgt != null) {
+                        tgt.removeSubscriber(this);
+                    }
+
                 }
-                
             }
+        } catch(Exception e )         {
+            System.err.println(e);
         }
-        
     }
 
     @Override
