@@ -241,7 +241,13 @@ public class ThingServerIT {
         };
         
         
+        t.start();
         
+        try {
+            t.join(10000);
+        } catch(Exception e ) {
+            fail("Thread exception : " + e.toString());
+        }
         
 
         //fail("The test case is a prototype.");
