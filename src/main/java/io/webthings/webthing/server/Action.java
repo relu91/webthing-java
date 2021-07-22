@@ -11,10 +11,20 @@ import io.webthings.webthing.affordances.ActionAffordance;
  *
  * @author Lorenzo
  */
-public class Action {
+public abstract class Action implements Runnable {
     private String              __name;
     private ActionAffordance    __data;
     private Class               __handler;
+    
+    private ThingObject         __owner;
+    
+    public ThingObject          getOwner() {
+        return  __owner;
+    }
+    
+    public void setOwner(ThingObject o) {
+        __owner = o;
+    }
     
     public Action(String name, ActionAffordance data,Class h) {
         __name = name;

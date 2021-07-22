@@ -64,8 +64,8 @@ public class ActionAffordance extends InteractionAffordance {
     public JSONObject   asJSON() { 
         final JSONObject ret = super.asJSON();
         
-        JSONEntityHelpers.addObject("input", __input, ret);
-        JSONEntityHelpers.addObject("output", __output, ret);
+        JSONEntityHelpers.addJSONEntity("input", __input, ret);
+        JSONEntityHelpers.addJSONEntity("output", __output, ret);
         JSONEntityHelpers.addObject("safe",__safe , ret);
         JSONEntityHelpers.addObject("idempotent",__idempotent , ret);
         

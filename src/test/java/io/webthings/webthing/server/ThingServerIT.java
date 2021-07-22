@@ -54,15 +54,19 @@ public class ThingServerIT {
         }
         
     }
-    public static class ToggleHandler extends ActionHandler {
+    public static class ToggleAction extends Action {
         private boolean  __state = false;
+        public ToggleAction(String name, ActionAffordance data,Class h) {
+            super(name, data, h);
+        }
+        
         public void run() {
             System.out.println("Current state : " + __state);
             __state = !__state;
             System.out.println("New  state : " + __state);
             
             //fire toggled event
-            final Event e = __owner.getEvent("toggled");
+            final Event e = getOwner().getEvent("toggled");
             if (e != null)
                 e.notifyEvent();
             
@@ -123,7 +127,7 @@ public class ThingServerIT {
         td.addSecurityDefinition("basic_sc", sc);
         
         final ThingObject to = new ThingObject(td);
-        to.addAction(new Action("toggle",aa_toggle,ToggleHandler.class));
+        to.addAction(new ToggleAction("toggle",aa_toggle,SyncActionHandler.class));
         to.addEvent(new ToggleEvent("toggled",ee_onoff));
         
         ret.add(to);
@@ -254,5 +258,22 @@ public class ThingServerIT {
     }
     
 
-    
+    public void testThingObject() {
+        try {
+            // If adding more than one thing, use MultipleThings() with a name.
+            // In the single thing case, the thing's name will be broadcast.
+            final List<ThingObject> thing = makeThing();
+            final ThingServer server = new ThingServer(thing, 8888);
+
+            Runtime.getRuntime().addShutdownHook(new Thread(server::stop));
+
+            server.start(false);
+        } catch (Exception e) {
+            System.out.println(e.toString());
+            e.printStackTrace(System.err);
+            System.exit(1);
+            fail("Server start error: " + e.toString());
+        }
+        
+    }
 }

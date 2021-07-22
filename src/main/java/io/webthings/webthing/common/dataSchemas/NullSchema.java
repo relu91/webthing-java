@@ -12,9 +12,8 @@ import io.webthings.webthing.common.DataSchema;
  * @author Lorenzo
  */
 public class NullSchema extends DataSchema{
-    @Override
-    public typeId getJSONType() {
-        return DataSchema.typeId.tiNull; 
+    public NullSchema() {
+        super(typeId.tiNull);
     }
     
     

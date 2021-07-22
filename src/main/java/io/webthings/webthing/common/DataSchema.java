@@ -59,8 +59,8 @@ public class DataSchema extends JSONEntity {
         
     }
     
-    public boolean validate() {
-        return true;
+    protected DataSchema(typeId id) {
+        __jsonType = id;
     }
     public DataSchema(String type, String title, String desc) {
         __title = title;

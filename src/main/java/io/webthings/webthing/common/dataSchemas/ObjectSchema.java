@@ -23,9 +23,8 @@ public class ObjectSchema extends DataSchema{
     private     Map<String,DataSchema>      __properties;
     private     List<String>                __required;
     
-    @Override
-    public typeId getJSONType() {
-        return typeId.tiObject;
+    public ObjectSchema() {
+        super(typeId.tiObject);
     }
     
     @Override

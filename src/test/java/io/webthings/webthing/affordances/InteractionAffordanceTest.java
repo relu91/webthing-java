@@ -12,6 +12,7 @@ import io.webthings.webthings.Common;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -184,6 +185,9 @@ public class InteractionAffordanceTest {
      */
     @Test
     public void testAddForm() throws Exception {
+        System.out.println("addForm");
+        final Form f = new Form("http://1.2.3.4");
+        Common.checkAddToCollection(InteractionAffordance.class, "addForm", "__forms", f);
 /*        
         System.out.println("addForm");
         Form f = null;
@@ -264,15 +268,20 @@ public class InteractionAffordanceTest {
      */
     @Test
     public void testAsJSON() {
-/*        
         System.out.println("asJSON");
-        InteractionAffordance instance = new InteractionAffordance();
-        JSONObject expResult = null;
-        JSONObject result = instance.asJSON();
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-*/        
+        try {
+            final InteractionAffordance ia = new InteractionAffordance("atype","AnInteraction","A sample interaction",new Form("http://1.2.3.4"));
+            final JSONObject o = ia.asJSON();
+            assertTrue("Type check", ia.getType().equals("atype"));
+            assertTrue("Title check", ia.getDefaultTitle().equals("AnInteraction"));
+            assertTrue("Description check", ia.getDefaultDescription().equals("A sample interaction"));
+            assertTrue("Form check 1", ia.getForms().size() == 1);
+            assertTrue("Form check 1", ia.getForms().get(0).getHref().toString().equals("http://1.2.3.4"));
+            
+        } catch(Exception e ) {
+            fail("Got exeption : " + e.toString());
+        }
+
     }
 
     /**
@@ -280,16 +289,46 @@ public class InteractionAffordanceTest {
      */
     @Test
     public void testFromJSON() throws Exception {
-/*        
         System.out.println("fromJSON");
-        JSONObject o = null;
-        InteractionAffordance instance = new InteractionAffordance();
-        JSONEntity expResult = null;
-        JSONEntity result = instance.fromJSON(o);
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-*/
+        
+        
+        final JSONObject o = new JSONObject();
+        o.put("title", "A title");
+        o.put("description", "A description");
+        o.put("@type", "type");
+        final JSONArray a = new JSONArray();
+        final JSONObject f = new JSONObject();
+        f.put("href", "http://1.2.3.4");
+        a.put(f);
+        o.put("forms", a);
+        
+        final InteractionAffordance ia = new InteractionAffordance();
+        
+        try {
+            ia.fromJSON(o);
+        } catch(Exception e ) {
+            fail("Got exeption : " + e.toString());
+        }
+        
+
+        final JSONObject f2 = new JSONObject();
+        f2.put("href", "http://5.6.7.8");
+        a.put(f2);
+        
+        try {
+            ia.fromJSON(o);
+            assertTrue("Type check", ia.getType().equals("type"));
+            assertTrue("Title check", ia.getDefaultTitle().equals("A title"));
+            assertTrue("Description check", ia.getDefaultDescription().equals("A description"));
+            assertTrue("Form check 1", ia.getForms().size() == 2);
+            assertTrue("Form check 1", ia.getForms().get(0).getHref().toString().equals("http://1.2.3.4"));
+            assertTrue("Form check 2", ia.getForms().get(1).getHref().toString().equals("http://5.6.7.8"));
+            
+        } catch(Exception e ) {
+            fail("Got exeption : " + e.toString());
+        }
+              
+
     }
     
 }

@@ -12,8 +12,8 @@ import io.webthings.webthing.common.DataSchema;
  * @author Lorenzo
  */
 public class StringSchema extends DataSchema{
-    @Override
-    public typeId getJSONType() {
-        return typeId.tiString;
+    
+    public StringSchema() {
+        super(typeId.tiString);
     }
 }

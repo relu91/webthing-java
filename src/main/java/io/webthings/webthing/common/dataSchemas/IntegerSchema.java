@@ -18,10 +18,8 @@ import org.json.JSONObject;
 public class IntegerSchema extends DataSchema{
     private Integer  __minimum;
     private Integer  __maximum;
-    
-    @Override
-    public typeId getJSONType() {
-        return typeId.tiInteger;
+    public IntegerSchema() {
+        super(typeId.tiInteger);
     }
     
     @Override

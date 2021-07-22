@@ -22,6 +22,15 @@ public abstract class Event implements IObservable , INotifiable{
     protected Class                       __handler;
     protected List<NanoWSD.WebSocket>     __subscribers = new ArrayList<>();
     
+    private ThingObject         __owner;
+    
+    public ThingObject          getOwner() {
+        return  __owner;
+    }
+    
+    public void setOwner(ThingObject o) {
+        __owner = o;
+    }
     
     public Event(String name,String desc, String type) {
         __evt_def = new EventAffordance();

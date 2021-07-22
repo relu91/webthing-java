@@ -19,9 +19,8 @@ public class NumberSchema extends DataSchema{
     private Double  __minimum;
     private Double  __maximum;
     
-    @Override
-    public typeId getJSONType() {
-        return typeId.tiNumber;
+    public NumberSchema() {
+        super(typeId.tiNumber);
     }
     
     @Override

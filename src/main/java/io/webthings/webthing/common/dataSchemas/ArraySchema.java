@@ -22,9 +22,9 @@ public class ArraySchema extends DataSchema{
     private List<DataSchema>        __items;
     private Integer                 __minItems;
     private Integer                 __maxItems;
-    @Override
-    public typeId getJSONType() {
-        return typeId.tiArray;
+
+    public ArraySchema() {
+        super(typeId.tiArray);
     }
     
     @Override

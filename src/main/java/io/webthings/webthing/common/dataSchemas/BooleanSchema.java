@@ -12,8 +12,10 @@ import io.webthings.webthing.common.DataSchema;
  * @author Lorenzo
  */
 public class BooleanSchema extends DataSchema{
-    @Override
-    public typeId getJSONType() {
-        return DataSchema.typeId.tiBoolean; 
+    
+    public BooleanSchema() {
+        super(DataSchema.typeId.tiBoolean);
     }
+    
+  
 }

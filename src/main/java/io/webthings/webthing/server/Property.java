@@ -22,6 +22,16 @@ public class Property implements IObservable {
     private Class                       __handler;
     private List<NanoWSD.WebSocket>     __subscribers = new ArrayList<>();
     
+    private ThingObject         __owner;
+    
+    public ThingObject          getOwner() {
+        return  __owner;
+    }
+    
+    public void setOwner(ThingObject o) {
+        __owner = o;
+    }
+    
     
     public Property(String name,String desc, String type,Object value) {
         __value = value;

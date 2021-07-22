@@ -20,7 +20,7 @@ import org.json.JSONObject;
  *
  * @author Lorenzo
  */
-public abstract class ActionHandler extends BaseHandler implements Runnable{
+public abstract class ActionHandler extends BaseHandler {
    protected    JSONObject  __request_body = null;
    protected    ThingObject __owner;
     @Override
@@ -142,26 +142,15 @@ public abstract class ActionHandler extends BaseHandler implements Runnable{
             
         }
         //parse body (if any)
+        final Action act = __owner.getAction(iName);
         try {
             __request_body = this.parseBody(session);
         } catch(Exception e ) {
             
         }
         
-        //start worker thread
-        final Thread t = new Thread(this);
-        t.start();
-        
-        //return ok !
-        return corsResponse(
-            NanoHTTPD.newFixedLengthResponse(
-                NanoHTTPD.Response.Status.OK,
-                "application/json",
-                null
-            )
-        );
-        
+        return executeAction(act);
     }
 
-   
+   abstract protected NanoHTTPD.Response executeAction(Action a );
 }

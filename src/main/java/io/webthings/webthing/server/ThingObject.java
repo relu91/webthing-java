@@ -40,6 +40,7 @@ public class  ThingObject {
     public void addProperty (Property p) {
         __data.addProperty(p.getName(), p.getData());
         __properties.put(p.getName(), p);
+        p.setOwner(this);        
      }
     
     public void removeProperty(String s) {
@@ -50,11 +51,13 @@ public class  ThingObject {
     public void addAction (Action  p) {
         __data.addAction(p.getName(), p.getData());
         __actions.put(p.getName(), p);
+        p.setOwner(this);
      }
     
     public void removeAction(String s) {
         __data.removeAction(s);
         __actions.remove(s);
+        
     }
     
     public Property getProperty(String s) {
@@ -102,6 +105,7 @@ public class  ThingObject {
     public void addEvent (Event  p) {
         __data.addEvent(p.getName(), p.getData());
         __events.put(p.getName(), p);
+        p.setOwner(this);        
      }
     
     public void removeEvent(String s) {

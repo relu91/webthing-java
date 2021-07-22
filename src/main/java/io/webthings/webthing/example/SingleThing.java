@@ -12,6 +12,7 @@ import io.webthings.webthing.forms.Operation;
 import io.webthings.webthing.server.Action;
 import io.webthings.webthing.server.ActionHandler;
 import io.webthings.webthing.server.Event;
+import io.webthings.webthing.server.SyncActionHandler;
 import io.webthings.webthing.server.ThingObject;
 import io.webthings.webthing.server.ThingServer;
 import java.net.URISyntaxException;
@@ -38,15 +39,19 @@ public class SingleThing {
         }
         
     }
-    public static class ToggleHandler extends ActionHandler {
+    public static class ToggleAction extends Action {
         private boolean  __state = false;
+        public ToggleAction(String name, ActionAffordance data,Class h) {
+            super(name, data, h);
+        }
+
         public void run() {
             System.out.println("Current state : " + __state);
             __state = !__state;
             System.out.println("New  state : " + __state);
             
             //fire toggled event
-            final Event e = __owner.getEvent("toggled");
+            final Event e = getOwner().getEvent("toggled");
             if (e != null)
                 e.notifyEvent();
             
@@ -107,7 +112,7 @@ public class SingleThing {
         td.addSecurityDefinition("basic_sc", sc);
         
         final ThingObject to = new ThingObject(td);
-        to.addAction(new Action("toggle",aa_toggle,ToggleHandler.class));
+        to.addAction(new ToggleAction("toggle",aa_toggle,SyncActionHandler.class));
         to.addEvent(new ToggleEvent("toggled",ee_onoff));
         
         ret.add(to);
