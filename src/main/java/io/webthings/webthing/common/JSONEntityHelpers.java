@@ -185,11 +185,14 @@ public class JSONEntityHelpers {
             
             final JSONObject    o = root.getJSONObject(name);
             if ( o != null) {
-                final   __T  c = cls.newInstance();
-                if (c instanceof DataSchema)
+                if (cls.getName().equals(DataSchema.class.getName())) {
                     ret = (__T) DataSchema.newInstance(o);
-                else
+                } else {
+                    final   __T  c = cls.newInstance();
                     ret = (__T) c.fromJSON(o);
+                }
+                
+     
             }
         } catch(Exception e ) {
             System.err.println(e);

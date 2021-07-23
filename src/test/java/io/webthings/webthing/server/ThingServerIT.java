@@ -36,43 +36,6 @@ import org.junit.Test;
  * @author Lorenzo
  */
 public class ThingServerIT {
-    public static class ToggleEvent extends Event {
-        public ToggleEvent(String name, EventAffordance p) {
-            super(name, p);
-        }
-        public ToggleEvent(String name, EventAffordance p,Class h) {
-            super(name, p, h);
-
-        }
-
-        @Override
-        protected JSONObject makeEventData() {
-            final JSONObject ret = new JSONObject();
-            ret.put("toggled", "Changed state !!");
-            
-            return ret;
-        }
-        
-    }
-    public static class ToggleAction extends Action {
-        private boolean  __state = false;
-        public ToggleAction(String name, ActionAffordance data,Class h) {
-            super(name, data, h);
-        }
-        
-        public void run() {
-            System.out.println("Current state : " + __state);
-            __state = !__state;
-            System.out.println("New  state : " + __state);
-            
-            //fire toggled event
-            final Event e = getOwner().getEvent("toggled");
-            if (e != null)
-                e.notifyEvent();
-            
-        }
-
-    }
     
     private static void addProperty(String title,String desc, String href, Operation.id op,ThingData tgt)throws URISyntaxException,WoTException {
         final PropertyAffordance pa  = new PropertyAffordance();

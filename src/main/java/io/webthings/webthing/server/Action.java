@@ -22,7 +22,7 @@ public abstract class Action implements Runnable {
         return  __owner;
     }
     
-    public void setOwner(ThingObject o) {
+    public void setOwner(ThingObject o)  {
         __owner = o;
     }
     

@@ -46,7 +46,7 @@ public class DataSchema extends JSONEntity {
     private     Map<String,String>       __descriptions;
     private     List<String>             __types;
     
-    private     typeId                  __jsonType = null;
+    private     typeId                  __jsonType;
     private     Object                  __const;
     private     String                  __unit;
     private     List<DataSchema>        __oneOf;
@@ -56,17 +56,12 @@ public class DataSchema extends JSONEntity {
     private     String                  __format;
     
     public DataSchema() {
+        //when type is not specified !!! 
+        __jsonType = null;
         
     }
-    
     protected DataSchema(typeId id) {
         __jsonType = id;
-    }
-    public DataSchema(String type, String title, String desc) {
-        __title = title;
-        __description = desc;
-        __types = checkedInitList(type);
-        
     }
     
     public void setType(String t) {
