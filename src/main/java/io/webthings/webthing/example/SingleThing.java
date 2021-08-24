@@ -1,131 +1,161 @@
 package io.webthings.webthing.example;
 
-import org.json.JSONArray;
+
+import io.webthings.webthing.affordances.ActionAffordance;
+import io.webthings.webthing.affordances.EventAffordance;
+import io.webthings.webthing.affordances.PropertyAffordance;
+import io.webthings.webthing.common.SecurityScheme;
+import io.webthings.webthing.common.ExposeThingInit;
+import io.webthings.webthing.common.dataSchemas.StringSchema;
+import io.webthings.webthing.exceptions.WoTException;
+import io.webthings.webthing.forms.Form;
+import io.webthings.webthing.forms.Operation;
+import io.webthings.webthing.server.Action;
+import io.webthings.webthing.server.Event;
+import io.webthings.webthing.server.Property;
+import io.webthings.webthing.server.SyncActionHandler;
+import io.webthings.webthing.server.ExposedWebThing;
+import io.webthings.webthing.server.ThingServer;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.List;
 import org.json.JSONObject;
 
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.UUID;
-
-import io.webthings.webthing.Action;
-import io.webthings.webthing.Event;
-import io.webthings.webthing.Property;
-import io.webthings.webthing.Thing;
-import io.webthings.webthing.Value;
-import io.webthings.webthing.WebThingServer;
-import io.webthings.webthing.errors.PropertyError;
-
 public class SingleThing {
-    public static Thing makeThing() {
-        Thing thing = new Thing("urn:dev:ops:my-lamp-1234",
-                                "My Lamp",
-                                new JSONArray(Arrays.asList("OnOffSwitch",
-                                                            "Light")),
-                                "A web connected lamp");
+    public static class ToggleEvent extends Event {
+        public ToggleEvent(String name, EventAffordance p) {
+            super(name, p);
+        }
+        public ToggleEvent(String name, EventAffordance p,Class h) {
+            super(name, p, h);
 
-        JSONObject onDescription = new JSONObject();
-        onDescription.put("@type", "OnOffProperty");
-        onDescription.put("title", "On/Off");
-        onDescription.put("type", "boolean");
-        onDescription.put("description", "Whether the lamp is turned on");
-        thing.addProperty(new Property(thing,
-                                       "on",
-                                       new Value(true),
-                                       onDescription));
+        }
 
-        JSONObject brightnessDescription = new JSONObject();
-        brightnessDescription.put("@type", "BrightnessProperty");
-        brightnessDescription.put("title", "Brightness");
-        brightnessDescription.put("type", "integer");
-        brightnessDescription.put("description",
-                                  "The level of light from 0-100");
-        brightnessDescription.put("minimum", 0);
-        brightnessDescription.put("maximum", 100);
-        brightnessDescription.put("unit", "percent");
-        thing.addProperty(new Property(thing,
-                                       "brightness",
-                                       new Value(50),
-                                       brightnessDescription));
+        @Override
+        protected JSONObject makeEventData() {
+            final JSONObject ret = new JSONObject();
+            ret.put("toggled", "Changed state !!");
+            
+            return ret;
+        }
+        
+    }
+    public static class ToggleAction extends Action {
+        public ToggleAction(String name, ActionAffordance data,Class h) {
+            super(name, data, h);
+        }
 
-        JSONObject fadeMetadata = new JSONObject();
-        JSONObject fadeInput = new JSONObject();
-        JSONObject fadeProperties = new JSONObject();
-        JSONObject fadeBrightness = new JSONObject();
-        JSONObject fadeDuration = new JSONObject();
-        fadeMetadata.put("title", "Fade");
-        fadeMetadata.put("description", "Fade the lamp to a given level");
-        fadeInput.put("type", "object");
-        fadeInput.put("required",
-                      new JSONArray(Arrays.asList("brightness", "duration")));
-        fadeBrightness.put("type", "integer");
-        fadeBrightness.put("minimum", 0);
-        fadeBrightness.put("maximum", 100);
-        fadeBrightness.put("unit", "percent");
-        fadeDuration.put("type", "integer");
-        fadeDuration.put("minimum", 1);
-        fadeDuration.put("unit", "milliseconds");
-        fadeProperties.put("brightness", fadeBrightness);
-        fadeProperties.put("duration", fadeDuration);
-        fadeInput.put("properties", fadeProperties);
-        fadeMetadata.put("input", fadeInput);
-        thing.addAvailableAction("fade", fadeMetadata, FadeAction.class);
+        public void run() {
+            final Property status = this.getOwner().getProperty("status");
+            final String value = (String)status.getValue();
 
-        JSONObject overheatedMetadata = new JSONObject();
-        overheatedMetadata.put("description",
-                               "The lamp has exceeded its safe operating temperature");
-        overheatedMetadata.put("type", "number");
-        overheatedMetadata.put("unit", "degree celsius");
-        thing.addAvailableEvent("overheated", overheatedMetadata);
+            System.out.println("Current state : " + value);
+            switch (value) {
+                case "on":
+                    status.setValue("off");
+                    break;
+                case "off":
+                    status.setValue("on");
+                    break;
+            }
 
-        return thing;
+            System.out.println("New  state : " + status.getValue());
+            
+            //fire toggled event
+            final Event e = getOwner().getEvent("toggled");
+            if (e != null)
+                e.notifyEvent();
+            
+        }
+
+    }
+    
+    private static void addStatusProperty(ExposeThingInit thingInit)throws URISyntaxException,WoTException {
+        String title = "Status";
+        String desc = "Current status";
+        String href= "/single/status";
+        Operation.id op = Operation.id.readproperty;
+
+        final PropertyAffordance pa  = new PropertyAffordance();
+        pa.setDefaultTitle(title);
+        pa.setDefaultDescription(desc);
+        final StringSchema schema = new StringSchema();
+        schema.addEnum("on");
+        schema.addEnum("off");
+        pa.setDataSchema(schema);
+
+        final Form f = new Form(href);
+        f.setOperation(op);
+        
+        pa.addForm(f);
+        thingInit.addProperty("status", pa);
+    }
+    private static void addMetadataForm(String href, Operation.id op,
+                                        ExposeThingInit tgt)throws URISyntaxException,WoTException {
+        final Form f = new Form(href);
+       
+        if (op != null)
+            f.setOperation(op);
+        
+        tgt.addForm(f);
+        
+        
+    }
+    
+    public static List<ExposedWebThing> makeThing() throws URISyntaxException,WoTException{
+        final List<ExposedWebThing> ret = new ArrayList<>();
+        final ExposeThingInit td = new ExposeThingInit();
+        addStatusProperty(td);
+
+        addMetadataForm("/single/allprops",Operation.id.readallproperties,td);
+        
+        final ActionAffordance aa_toggle = new ActionAffordance();
+        aa_toggle.setDefaultTitle("Toggle");
+        aa_toggle.setDefaultDescription("Toggle Action");
+        final Form aa_form = new Form("/single/toggle");
+        aa_form.setHTTPMethodName("GET");
+        aa_toggle.addForm(aa_form);
+        
+        td.addAction("toggle", aa_toggle);
+        
+        final EventAffordance ee_onoff = new EventAffordance();
+        ee_onoff.addForm(new Form("/single/toggled"));
+        ee_onoff.setDefaultTitle("Toggled");
+        ee_onoff.setDefaultDescription("Toggled Event");
+        td.addEvent("toggled", ee_onoff);
+        
+        td.addSecurity("basic_sc");
+        final SecurityScheme sc = SecurityScheme.newInstance(SecurityScheme.typeId.siBasic);
+        sc.setType("basic");
+        sc.setDefaultDescription("Basic Security");
+        td.addSecurityDefinition("basic_sc", sc);
+        
+        final ExposedWebThing to = new ExposedWebThing(td);
+        to.getProperty("status").setValue("off");
+        to.addAction(new ToggleAction("toggle",aa_toggle,SyncActionHandler.class));
+        to.addEvent(new ToggleEvent("toggled",ee_onoff));
+        
+        ret.add(to);
+        return ret;
     }
 
     public static void main(String[] args) {
-        Thing thing = makeThing();
-        WebThingServer server;
+        
+        
 
         try {
             // If adding more than one thing, use MultipleThings() with a name.
             // In the single thing case, the thing's name will be broadcast.
-            server = new WebThingServer(new WebThingServer.SingleThing(thing),
-                                        8888);
+            final List<ExposedWebThing> thing = makeThing();
+            final ThingServer server = new ThingServer(thing, 8888);
 
             Runtime.getRuntime().addShutdownHook(new Thread(server::stop));
 
             server.start(false);
-        } catch (IOException e) {
+        } catch (Exception e) {
             System.out.println(e.toString());
+            e.printStackTrace(System.err);
             System.exit(1);
-        }
-    }
-
-    public static class OverheatedEvent extends Event {
-        public OverheatedEvent(Thing thing, int data) {
-            super(thing, "overheated", data);
-        }
-    }
-
-    public static class FadeAction extends Action {
-        public FadeAction(Thing thing, JSONObject input) {
-            super(UUID.randomUUID().toString(), thing, "fade", input);
-        }
-
-        @Override
-        public void performAction() {
-            Thing thing = this.getThing();
-            JSONObject input = this.getInput();
-            try {
-                Thread.sleep(input.getInt("duration"));
-            } catch (InterruptedException e) {
-                // pass
-            }
-
-            try {
-                thing.setProperty("brightness", input.getInt("brightness"));
-                thing.addEvent(new OverheatedEvent(thing, 102));
-            } catch (PropertyError e) {
-                // pass
-            }
         }
     }
 }
