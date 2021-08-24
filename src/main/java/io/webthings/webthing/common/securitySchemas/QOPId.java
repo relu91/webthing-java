@@ -1,29 +1,23 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package io.webthings.webthing.common.securitySchemas;
 
 import io.webthings.webthing.exceptions.InvalidFieldException;
 import io.webthings.webthing.exceptions.WoTException;
 
 /**
- *
  * @author Lorenzo
  */
 public class QOPId {
     public enum typeId {
-        qiAuth,
-        qiAuthInt
+        qiAuth, qiAuthInt
     }
-    
-    public static typeId decodeId(String s ) throws WoTException{
+
+    public static typeId decodeId(String s) throws WoTException {
         typeId ret = null;
-        if (s == null || s.length() == 0 )
+        if (s == null || s.length() == 0) {
             return ret;
-        
-        switch(s) {
+        }
+
+        switch (s) {
             case "auth":
                 ret = typeId.qiAuth;
                 break;
@@ -31,18 +25,19 @@ public class QOPId {
                 ret = typeId.qiAuthInt;
                 break;
             default:
-                throw new InvalidFieldException("qop",s);
+                throw new InvalidFieldException("qop", s);
         }
-        
+
         return ret;
     }
-    
+
     public static String decodeId(typeId id) {
         String ret = null;
-        if (id  == null)
+        if (id == null) {
             return ret;
-        
-        switch(id) {
+        }
+
+        switch (id) {
             case qiAuth:
                 ret = "auth";
                 break;
@@ -50,7 +45,7 @@ public class QOPId {
                 ret = "auth-int";
                 break;
         }
-        
+
         return ret;
     }
 }

@@ -1,57 +1,53 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package io.webthings.webthing.common.dataSchemas;
 
 import io.webthings.webthing.JSONEntity;
 import io.webthings.webthing.common.DataSchema;
 import io.webthings.webthing.common.JSONEntityHelpers;
 import io.webthings.webthing.exceptions.WoTException;
+
 import org.json.JSONObject;
 
 /**
- *
  * @author Lorenzo
  */
-public class IntegerSchema extends DataSchema{
-    private Integer  __minimum;
-    private Integer  __maximum;
+public class IntegerSchema extends DataSchema {
+    private Integer minimum;
+    private Integer maximum;
+
     public IntegerSchema() {
         super(typeId.tiInteger);
     }
-    
+
     @Override
     public JSONEntity fromJSON(JSONObject o) throws WoTException {
         super.fromJSON(o);
-        __minimum = JSONEntityHelpers.readObject(o, "minimum", Integer.class);
-        __maximum = JSONEntityHelpers.readObject(o, "maximum", Integer.class);
-        
+        minimum = JSONEntityHelpers.readObject(o, "minimum", Integer.class);
+        maximum = JSONEntityHelpers.readObject(o, "maximum", Integer.class);
+
         return this;
     }
 
     @Override
-    public JSONObject   asJSON() {
+    public JSONObject asJSON() {
         final JSONObject ret = super.asJSON();
-        JSONEntityHelpers.addObject("minimum", __minimum, ret);
-        JSONEntityHelpers.addObject("maximum", __maximum, ret);
+        JSONEntityHelpers.addObject("minimum", minimum, ret);
+        JSONEntityHelpers.addObject("maximum", maximum, ret);
         return ret;
-    }    
-    
+    }
+
     public Integer getMinimum() {
-        return __minimum;
+        return minimum;
     }
+
     public Integer getMaximum() {
-        return __maximum;
+        return maximum;
     }
-    
+
     public void setMinimum(Integer d) {
-        __minimum = d;
+        minimum = d;
     }
-    
-    public void setMaximum(Integer d ) {
-        __maximum = d;
+
+    public void setMaximum(Integer d) {
+        maximum = d;
     }
-    
 }

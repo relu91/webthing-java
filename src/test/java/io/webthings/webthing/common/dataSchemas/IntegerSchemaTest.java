@@ -1,46 +1,22 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package io.webthings.webthing.common.dataSchemas;
 
-import io.webthings.webthing.JSONEntity;
 import io.webthings.webthing.common.DataSchema;
+
 import org.json.JSONObject;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
 import static org.junit.Assert.*;
-import io.webthings.webthings.Common;
+
+import io.webthings.Common;
 
 /**
- *
  * @author Lorenzo
  */
 public class IntegerSchemaTest {
-    
-    public IntegerSchemaTest() {
-    }
-    
-    @BeforeClass
-    public static void setUpClass() {
-    }
-    
-    @AfterClass
-    public static void tearDownClass() {
-    }
-    
-    @Before
-    public void setUp() {
-    }
-    
-    @After
-    public void tearDown() {
-    }
-
     /**
      * Test of getJSONType method, of class IntegerSchema.
      */
@@ -59,27 +35,34 @@ public class IntegerSchemaTest {
         System.out.println("fromJSON");
         final JSONObject o = new JSONObject();
         o.put("type", "integer");
-        o.put("minimum",16);
-        o.put("maximum",36);
-        
-        
+        o.put("minimum", 16);
+        o.put("maximum", 36);
+
+
         IntegerSchema ds = new IntegerSchema();
         ds.fromJSON(o);
-        
-        assertTrue("1. Type",ds.getJSONType() == DataSchema.typeId.tiInteger);
-        assertTrue("1. Min 1", ds.getMinimum() != null);;
-        assertTrue("1. Min 2", ds.getMinimum() == 16);;
-        assertTrue("1. Max 1", ds.getMaximum()!= null);;
-        assertTrue("1. Max 2", ds.getMaximum()== 36);;
-        
-        ds = (IntegerSchema) DataSchema.newInstance(o);
 
-        assertTrue("2. Type",ds.getJSONType() == DataSchema.typeId.tiInteger);
-        assertTrue("2. Min 1", ds.getMinimum() != null);;
-        assertTrue("2. Min 2", ds.getMinimum() == 16);;
-        assertTrue("2. Max 1", ds.getMaximum()!= null);;
-        assertTrue("2. Max 2", ds.getMaximum()== 36);;
-        
+        assertTrue("1. Type", ds.getJSONType() == DataSchema.typeId.tiInteger);
+        assertTrue("1. Min 1", ds.getMinimum() != null);
+
+        assertTrue("1. Min 2", ds.getMinimum() == 16);
+
+        assertTrue("1. Max 1", ds.getMaximum() != null);
+
+        assertTrue("1. Max 2", ds.getMaximum() == 36);
+
+
+        ds = (IntegerSchema)DataSchema.newInstance(o);
+
+        assertTrue("2. Type", ds.getJSONType() == DataSchema.typeId.tiInteger);
+        assertTrue("2. Min 1", ds.getMinimum() != null);
+
+        assertTrue("2. Min 2", ds.getMinimum() == 16);
+
+        assertTrue("2. Max 1", ds.getMaximum() != null);
+
+        assertTrue("2. Max 2", ds.getMaximum() == 36);
+
     }
 
     /**
@@ -91,19 +74,17 @@ public class IntegerSchemaTest {
         final IntegerSchema ds = new IntegerSchema();
         ds.setMaximum(36);
         ds.setMinimum(16);
-        
+
         final JSONObject o = ds.asJSON();
-        
+
         assertTrue("Type 1", o.has("type"));
         assertTrue("Type 2", o.getString("type").equals("integer"));
-        
+
         assertTrue("Min 1", o.has("minimum"));
         assertTrue("Min 2", o.getInt("minimum") == 16);
 
         assertTrue("Max 1", o.has("maximum"));
         assertTrue("Max 2", o.getInt("maximum") == 36);
-        
-    
     }
 
     /**
@@ -113,7 +94,7 @@ public class IntegerSchemaTest {
     public void testGetMinimum() {
         System.out.println("getMinimum");
         final Integer i = 12;
-        Common.checkGetter(IntegerSchema.class, "Minimum","__minimum",i);
+        Common.checkGetter(IntegerSchema.class, "Minimum", "minimum", i);
     }
 
     /**
@@ -123,7 +104,7 @@ public class IntegerSchemaTest {
     public void testGetMaximum() {
         System.out.println("getMaximum");
         final Integer i = 12;
-        Common.checkGetter(IntegerSchema.class, "Maximum","__maximum",i);
+        Common.checkGetter(IntegerSchema.class, "Maximum", "maximum", i);
     }
 
     /**
@@ -133,7 +114,7 @@ public class IntegerSchemaTest {
     public void testSetMinimum() {
         System.out.println("setMinimum");
         final Integer i = 12;
-        Common.checkSetter(IntegerSchema.class, "Minimum","__minimum",i);
+        Common.checkSetter(IntegerSchema.class, "Minimum", "minimum", i);
     }
 
     /**
@@ -143,7 +124,6 @@ public class IntegerSchemaTest {
     public void testSetMaximum() {
         System.out.println("setMaximum");
         final Integer i = 12;
-        Common.checkSetter(IntegerSchema.class, "Maximum","__maximum",i);
+        Common.checkSetter(IntegerSchema.class, "Maximum", "maximum", i);
     }
-    
 }

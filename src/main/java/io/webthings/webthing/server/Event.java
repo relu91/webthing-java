@@ -1,108 +1,103 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package io.webthings.webthing.server;
 
 import fi.iki.elonen.NanoWSD;
 import io.webthings.webthing.affordances.EventAffordance;
-import io.webthings.webthing.affordances.EventAffordance;
+
 import java.util.ArrayList;
 import java.util.List;
+
 import org.json.JSONObject;
 
 /**
- *
  * @author Lorenzo
  */
-public abstract class Event implements IObservable , INotifiable{
-    protected final EventAffordance       __evt_def;
-    protected String                      __name;
-    protected Class                       __handler;
-    protected List<NanoWSD.WebSocket>     __subscribers = new ArrayList<>();
-    
-    private ThingObject         __owner;
-    
-    public ThingObject          getOwner() {
-        return  __owner;
+public abstract class Event implements IObservable, INotifiable {
+    protected final EventAffordance eventAffordance;
+    protected String name;
+    protected Class handler;
+    protected List<NanoWSD.WebSocket> subscribers = new ArrayList<>();
+    private ThingObject owner;
+
+    public ThingObject getOwner() {
+        return owner;
     }
-    
+
     public void setOwner(ThingObject o) {
-        __owner = o;
+        owner = o;
     }
-    
-    public Event(String name,String desc, String type) {
-        __evt_def = new EventAffordance();
-        __evt_def.setDefaultDescription(desc);
-        __evt_def.setDefaultTitle(name);
-        __name = name;
-        __evt_def.setType(type);
+
+    public Event(String name, String desc, String type) {
+        eventAffordance = new EventAffordance();
+        eventAffordance.setDefaultDescription(desc);
+        eventAffordance.setDefaultTitle(name);
+        this.name = name;
+        eventAffordance.setType(type);
     }
+
     public Event(String name, EventAffordance p) {
         this(name, p, EventHandler.class);
     }
-    public Event(String name, EventAffordance p,Class h) {
-        __evt_def = p;
-        __name = name;
-        __handler = h;
+
+    public Event(String name, EventAffordance p, Class h) {
+        eventAffordance = p;
+        this.name = name;
+        handler = h;
     }
-    
+
     public EventAffordance getData() {
-        return __evt_def;
+        return eventAffordance;
     }
-    
-  
+
     public String getName() {
-        return __name;
+        return name;
     }
-    
-    public void setName(String s ) {
-        __name = s;
+
+    public void setName(String s) {
+        name = s;
     }
-    
+
     public Class getHandler() {
-        return __handler;
+        return handler;
     }
-    
-    public void setHandler(Class c ) {
-        __handler = c;
+
+    public void setHandler(Class c) {
+        handler = c;
     }
 
     @Override
     public void addSuscriber(NanoWSD.WebSocket ws) {
-        __subscribers.add(ws);
+        subscribers.add(ws);
     }
 
     @Override
     public void removeSubscriber(NanoWSD.WebSocket ws) {
-        __subscribers.remove(ws);
+        subscribers.remove(ws);
     }
 
     @Override
     public List<NanoWSD.WebSocket> getSubscribers() {
-        return __subscribers;
+        return subscribers;
     }
 
     @Override
     public void notifyEvent() {
-        final List<NanoWSD.WebSocket>   deadOnes = new ArrayList<>();
+        final List<NanoWSD.WebSocket> deadOnes = new ArrayList<>();
         final JSONObject o = makeEventData();
         final String s = o.toString();
-        
-        for(final NanoWSD.WebSocket x : __subscribers)  {
+
+        for (final NanoWSD.WebSocket x : subscribers) {
             try {
                 //do something
                 x.send(s);
-            } catch(Exception e ) {
+            } catch (Exception e) {
                 deadOnes.add(x);
             }
         }
-        
-        for(final NanoWSD.WebSocket x : deadOnes)  {
-            __subscribers.remove(x);
+
+        for (final NanoWSD.WebSocket x : deadOnes) {
+            subscribers.remove(x);
         }
     }
-    
-    protected abstract JSONObject   makeEventData();
+
+    protected abstract JSONObject makeEventData();
 }

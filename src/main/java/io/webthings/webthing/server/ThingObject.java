@@ -1,119 +1,112 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package io.webthings.webthing.server;
 
-import io.webthings.webthing.affordances.EventAffordance;
 import io.webthings.webthing.affordances.PropertyAffordance;
 import io.webthings.webthing.common.ThingData;
+
 import java.util.Map;
 import java.util.TreeMap;
 
 /**
- *
  * @author Lorenzo
  */
-public class  ThingObject {
-    private final   ThingData                   __data;
-    private final   Map<String,Property>        __properties = new TreeMap<>();
-    private final   Map<String,Action>          __actions = new TreeMap<>();
-    private final   Map<String,Event>           __events  = new TreeMap<>();
-    
-    
+public class ThingObject {
+    private final ThingData data;
+    private final Map<String, Property> properties = new TreeMap<>();
+    private final Map<String, Action> actions = new TreeMap<>();
+    private final Map<String, Event> events = new TreeMap<>();
+
     public ThingObject(ThingData d) {
-        __data = d;
-        
-        for(final Map.Entry<String,PropertyAffordance> e : d.getProperties().entrySet()) {
+        data = d;
+
+        for (final Map.Entry<String, PropertyAffordance> e : d.getProperties()
+                                                              .entrySet()) {
             final String name = e.getKey();
             final PropertyAffordance pa = e.getValue();
-            __properties.put(name, new Property(name, pa));
+            properties.put(name, new Property(name, pa));
         }
-        
     }
-    
-    
-    public ThingData    getData() {
-        return __data;
+
+    public ThingData getData() {
+        return data;
     }
-    public void addProperty (Property p) {
-        __data.addProperty(p.getName(), p.getData());
-        __properties.put(p.getName(), p);
-        p.setOwner(this);        
-     }
-    
-    public void removeProperty(String s) {
-        __data.removeProperty(s);
-        __properties.remove(s);
-    }
-    
-    public void addAction (Action  p) {
-        __data.addAction(p.getName(), p.getData());
-        __actions.put(p.getName(), p);
+
+    public void addProperty(Property p) {
+        data.addProperty(p.getName(), p.getData());
+        properties.put(p.getName(), p);
         p.setOwner(this);
-     }
-    
+    }
+
+    public void removeProperty(String s) {
+        data.removeProperty(s);
+        properties.remove(s);
+    }
+
+    public void addAction(Action p) {
+        data.addAction(p.getName(), p.getData());
+        actions.put(p.getName(), p);
+        p.setOwner(this);
+    }
+
     public void removeAction(String s) {
-        __data.removeAction(s);
-        __actions.remove(s);
-        
+        data.removeAction(s);
+        actions.remove(s);
     }
-    
+
     public Property getProperty(String s) {
-        return __properties.get(s);
+        return properties.get(s);
     }
+
     public Action getAction(String s) {
-        return __actions.get(s);
+        return actions.get(s);
     }
-    
+
     public void registerEndpoints() {
-        final ManagedThingsCollection mti = ManagedThingsCollection.getInstance();
+        final ManagedThingsCollection mti =
+                ManagedThingsCollection.getInstance();
         mti.add(this);
-        
     }
-    
-    public void  setPropertyValue(String name, Object value) {
-        final Property p = __properties.get(name);
+
+    public void setPropertyValue(String name, Object value) {
+        final Property p = properties.get(name);
         if (p != null) {
             p.setValue(value);
         }
-        
     }
-    
+
     public Object getPropertyValue(String name) {
         Object ret = null;
-        final Property p = __properties.get(name);
-        if ( p != null)
+        final Property p = properties.get(name);
+        if (p != null) {
             ret = p.getValue();
-        
+        }
+
         return ret;
     }
-    
-    public Map<String,Property> getProperties() {
-        return __properties;
+
+    public Map<String, Property> getProperties() {
+        return properties;
     }
-    
-    public Map<String,Action> getActions() {
-        return __actions;
+
+    public Map<String, Action> getActions() {
+        return actions;
     }
-    
-    
-    public Map<String,Event> getEvents() {
-        return __events;
+
+    public Map<String, Event> getEvents() {
+        return events;
     }
-    public void addEvent (Event  p) {
-        __data.addEvent(p.getName(), p.getData());
-        __events.put(p.getName(), p);
-        p.setOwner(this);        
-     }
-    
+
+    public void addEvent(Event p) {
+        data.addEvent(p.getName(), p.getData());
+        events.put(p.getName(), p);
+        p.setOwner(this);
+    }
+
     public void removeEvent(String s) {
-        __data.removeEvent(s);
-        __events.remove(s);
+        data.removeEvent(s);
+        events.remove(s);
     }
+
     public Event getEvent(String s) {
-        return __events.get(s);
+        return events.get(s);
     }
-     
 }

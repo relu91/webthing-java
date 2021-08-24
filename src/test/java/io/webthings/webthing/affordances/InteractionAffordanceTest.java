@@ -1,17 +1,11 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package io.webthings.webthing.affordances;
 
-import io.webthings.webthing.JSONEntity;
-import io.webthings.webthing.common.DataSchema;
 import io.webthings.webthing.forms.Form;
-import io.webthings.webthings.Common;
+import io.webthings.Common;
+
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.After;
@@ -19,40 +13,24 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
 import static org.junit.Assert.*;
 
 /**
- *
  * @author Lorenzo
  */
 public class InteractionAffordanceTest {
-    
-    public InteractionAffordanceTest() {
-    }
-    
-    @BeforeClass
-    public static void setUpClass() {
-    }
-    
-    @AfterClass
-    public static void tearDownClass() {
-    }
-    
-    @Before
-    public void setUp() {
-    }
-    
-    @After
-    public void tearDown() {
-    }
-
     /**
      * Test of setType method, of class InteractionAffordance.
      */
     @Test
     public void testSetType() {
         System.out.println("setType");
-        Common.checkSetterOnCollection(InteractionAffordance.class, "Type", "__types", "a type", List.class);
+        Common.checkSetterOnCollection(InteractionAffordance.class,
+                                       "Type",
+                                       "types",
+                                       "a type",
+                                       List.class);
     }
 
     /**
@@ -61,7 +39,11 @@ public class InteractionAffordanceTest {
     @Test
     public void testGetType() {
         System.out.println("getType");
-        Common.checkGetterOnCollection(InteractionAffordance.class, "Type", "__types", "a type",ArrayList.class);
+        Common.checkGetterOnCollection(InteractionAffordance.class,
+                                       "Type",
+                                       "types",
+                                       "a type",
+                                       ArrayList.class);
     }
 
     /**
@@ -73,10 +55,11 @@ public class InteractionAffordanceTest {
         final List<String> result = new ArrayList<>();
         result.add("a type");
         result.add("b type");
-  
-        Common.checkGetter(InteractionAffordance.class, "Types", "__types", result);
-        
-    
+
+        Common.checkGetter(InteractionAffordance.class,
+                           "Types",
+                           "types",
+                           result);
     }
 
     /**
@@ -85,7 +68,10 @@ public class InteractionAffordanceTest {
     @Test
     public void testAddType() {
         System.out.println("addType");
-        Common.checkAddToCollection(InteractionAffordance.class, "addType", "__types", "a type");
+        Common.checkAddToCollection(InteractionAffordance.class,
+                                    "addType",
+                                    "types",
+                                    "a type");
     }
 
     /**
@@ -93,9 +79,12 @@ public class InteractionAffordanceTest {
      */
     @Test
     public void testSetDefaultTitle() {
-        
+
         System.out.println("setDefaultTitle");
-        Common.checkSetter(InteractionAffordance.class, "DefaultTitle", "__title", "A title");
+        Common.checkSetter(InteractionAffordance.class,
+                           "DefaultTitle",
+                           "title",
+                           "A title");
     }
 
     /**
@@ -104,7 +93,10 @@ public class InteractionAffordanceTest {
     @Test
     public void testGetDefaultTitle() {
         System.out.println("getDefaultTitle");
-        Common.checkGetter(InteractionAffordance.class, "DefaultTitle", "__title", "A title");
+        Common.checkGetter(InteractionAffordance.class,
+                           "DefaultTitle",
+                           "title",
+                           "A title");
     }
 
     /**
@@ -113,8 +105,11 @@ public class InteractionAffordanceTest {
     @Test
     public void testSetI18NTitle() {
         System.out.println("setI18NTitle");
-        Common.checkAddToCollection(InteractionAffordance.class, "setI18NTitle", "__titles", "EN", "A title");
-        
+        Common.checkAddToCollection(InteractionAffordance.class,
+                                    "setI18NTitle",
+                                    "titles",
+                                    "EN",
+                                    "A title");
     }
 
     /**
@@ -123,7 +118,11 @@ public class InteractionAffordanceTest {
     @Test
     public void testGetI18NTitle() {
         System.out.println("getI18NTitle");
-        Common.checkGetterOnMap(InteractionAffordance.class, "I18NTitle", "__titles", "IT", "A title");
+        Common.checkGetterOnMap(InteractionAffordance.class,
+                                "I18NTitle",
+                                "titles",
+                                "IT",
+                                "A title");
     }
 
     /**
@@ -132,7 +131,11 @@ public class InteractionAffordanceTest {
     @Test
     public void testRemoveI18NTitle() {
         System.out.println("removeI18NTitle");
-        Common.checkRemoveFromCollection(InteractionAffordance.class, "removeI18NTitle", "__titles", "IT", "Un titolo");
+        Common.checkRemoveFromCollection(InteractionAffordance.class,
+                                         "removeI18NTitle",
+                                         "titles",
+                                         "IT",
+                                         "Un titolo");
     }
 
     /**
@@ -141,7 +144,10 @@ public class InteractionAffordanceTest {
     @Test
     public void testSetDefaultDescription() {
         System.out.println("setDefaultDescription");
-        Common.checkSetter(InteractionAffordance.class, "DefaultDescription", "__description", "A description");
+        Common.checkSetter(InteractionAffordance.class,
+                           "DefaultDescription",
+                           "description",
+                           "A description");
     }
 
     /**
@@ -150,7 +156,10 @@ public class InteractionAffordanceTest {
     @Test
     public void testGetDefaultDescription() {
         System.out.println("getDefaultDescription");
-        Common.checkGetter(InteractionAffordance.class, "DefaultDescription", "__description", "A description");    
+        Common.checkGetter(InteractionAffordance.class,
+                           "DefaultDescription",
+                           "description",
+                           "A description");
     }
 
     /**
@@ -159,7 +168,11 @@ public class InteractionAffordanceTest {
     @Test
     public void testSetI18NDescription() {
         System.out.println("setI18NDescription");
-        Common.checkAddToCollection(InteractionAffordance.class, "setI18NDescription", "__descriptions", "EN", "A description");
+        Common.checkAddToCollection(InteractionAffordance.class,
+                                    "setI18NDescription",
+                                    "descriptions",
+                                    "EN",
+                                    "A description");
     }
 
     /**
@@ -168,7 +181,11 @@ public class InteractionAffordanceTest {
     @Test
     public void testGetI18NDescription() {
         System.out.println("getI18NDescription");
-        Common.checkGetterOnMap(InteractionAffordance.class, "I18NDescription", "__descriptions", "IT", "A descriptions"); 
+        Common.checkGetterOnMap(InteractionAffordance.class,
+                                "I18NDescription",
+                                "descriptions",
+                                "IT",
+                                "A descriptions");
     }
 
     /**
@@ -177,7 +194,11 @@ public class InteractionAffordanceTest {
     @Test
     public void testRemoveI18NDescription() {
         System.out.println("removeI18NDescription");
-        Common.checkRemoveFromCollection(InteractionAffordance.class, "removeI18NDescription", "__descriptions", "IT", "Una descrizione");
+        Common.checkRemoveFromCollection(InteractionAffordance.class,
+                                         "removeI18NDescription",
+                                         "descriptions",
+                                         "IT",
+                                         "Una descrizione");
     }
 
     /**
@@ -187,7 +208,10 @@ public class InteractionAffordanceTest {
     public void testAddForm() throws Exception {
         System.out.println("addForm");
         final Form f = new Form("http://1.2.3.4");
-        Common.checkAddToCollection(InteractionAffordance.class, "addForm", "__forms", f);
+        Common.checkAddToCollection(InteractionAffordance.class,
+                                    "addForm",
+                                    "forms",
+                                    f);
 /*        
         System.out.println("addForm");
         Form f = null;
@@ -195,7 +219,7 @@ public class InteractionAffordanceTest {
         instance.addForm(f);
         // TODO review the generated test code and remove the default call to fail.
         fail("The test case is a prototype.");
-*/        
+*/
     }
 
     /**
@@ -211,7 +235,7 @@ public class InteractionAffordanceTest {
         assertEquals(expResult, result);
         // TODO review the generated test code and remove the default call to fail.
         fail("The test case is a prototype.");
-*/        
+*/
     }
 
     /**
@@ -227,7 +251,7 @@ public class InteractionAffordanceTest {
         assertEquals(expResult, result);
         // TODO review the generated test code and remove the default call to fail.
         fail("The test case is a prototype.");
-*/        
+*/
     }
 
     /**
@@ -244,7 +268,7 @@ public class InteractionAffordanceTest {
         assertEquals(expResult, result);
         // TODO review the generated test code and remove the default call to fail.
         fail("The test case is a prototype.");
-*/        
+*/
     }
 
     /**
@@ -260,7 +284,7 @@ public class InteractionAffordanceTest {
         instance.putUriVariable(s, d);
         // TODO review the generated test code and remove the default call to fail.
         fail("The test case is a prototype.");
-*/        
+*/
     }
 
     /**
@@ -270,18 +294,28 @@ public class InteractionAffordanceTest {
     public void testAsJSON() {
         System.out.println("asJSON");
         try {
-            final InteractionAffordance ia = new InteractionAffordance("atype","AnInteraction","A sample interaction",new Form("http://1.2.3.4"));
+            final InteractionAffordance ia = new InteractionAffordance("atype",
+                                                                       "AnInteraction",
+                                                                       "A sample interaction",
+                                                                       new Form(
+                                                                               "http://1.2.3.4"));
             final JSONObject o = ia.asJSON();
             assertTrue("Type check", ia.getType().equals("atype"));
-            assertTrue("Title check", ia.getDefaultTitle().equals("AnInteraction"));
-            assertTrue("Description check", ia.getDefaultDescription().equals("A sample interaction"));
+            assertTrue("Title check",
+                       ia.getDefaultTitle().equals("AnInteraction"));
+            assertTrue("Description check",
+                       ia.getDefaultDescription()
+                         .equals("A sample interaction"));
             assertTrue("Form check 1", ia.getForms().size() == 1);
-            assertTrue("Form check 1", ia.getForms().get(0).getHref().toString().equals("http://1.2.3.4"));
-            
-        } catch(Exception e ) {
+            assertTrue("Form check 1",
+                       ia.getForms()
+                         .get(0)
+                         .getHref()
+                         .toString()
+                         .equals("http://1.2.3.4"));
+        } catch (Exception e) {
             fail("Got exeption : " + e.toString());
         }
-
     }
 
     /**
@@ -290,8 +324,8 @@ public class InteractionAffordanceTest {
     @Test
     public void testFromJSON() throws Exception {
         System.out.println("fromJSON");
-        
-        
+
+
         final JSONObject o = new JSONObject();
         o.put("title", "A title");
         o.put("description", "A description");
@@ -301,34 +335,41 @@ public class InteractionAffordanceTest {
         f.put("href", "http://1.2.3.4");
         a.put(f);
         o.put("forms", a);
-        
+
         final InteractionAffordance ia = new InteractionAffordance();
-        
+
         try {
             ia.fromJSON(o);
-        } catch(Exception e ) {
+        } catch (Exception e) {
             fail("Got exeption : " + e.toString());
         }
-        
+
 
         final JSONObject f2 = new JSONObject();
         f2.put("href", "http://5.6.7.8");
         a.put(f2);
-        
+
         try {
             ia.fromJSON(o);
             assertTrue("Type check", ia.getType().equals("type"));
             assertTrue("Title check", ia.getDefaultTitle().equals("A title"));
-            assertTrue("Description check", ia.getDefaultDescription().equals("A description"));
+            assertTrue("Description check",
+                       ia.getDefaultDescription().equals("A description"));
             assertTrue("Form check 1", ia.getForms().size() == 2);
-            assertTrue("Form check 1", ia.getForms().get(0).getHref().toString().equals("http://1.2.3.4"));
-            assertTrue("Form check 2", ia.getForms().get(1).getHref().toString().equals("http://5.6.7.8"));
-            
-        } catch(Exception e ) {
+            assertTrue("Form check 1",
+                       ia.getForms()
+                         .get(0)
+                         .getHref()
+                         .toString()
+                         .equals("http://1.2.3.4"));
+            assertTrue("Form check 2",
+                       ia.getForms()
+                         .get(1)
+                         .getHref()
+                         .toString()
+                         .equals("http://5.6.7.8"));
+        } catch (Exception e) {
             fail("Got exeption : " + e.toString());
         }
-              
-
     }
-    
 }

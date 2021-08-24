@@ -1,58 +1,53 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package io.webthings.webthing.common.dataSchemas;
 
 import io.webthings.webthing.JSONEntity;
 import io.webthings.webthing.common.DataSchema;
 import io.webthings.webthing.common.JSONEntityHelpers;
 import io.webthings.webthing.exceptions.WoTException;
+
 import org.json.JSONObject;
 
 /**
- *
  * @author Lorenzo
  */
-public class NumberSchema extends DataSchema{
-    private Double  __minimum;
-    private Double  __maximum;
-    
+public class NumberSchema extends DataSchema {
+    private Double minimum;
+    private Double maximum;
+
     public NumberSchema() {
         super(typeId.tiNumber);
     }
-    
+
     @Override
     public JSONEntity fromJSON(JSONObject o) throws WoTException {
         super.fromJSON(o);
-        __minimum = JSONEntityHelpers.readObject(o, "minimum", Double.class);
-        __maximum = JSONEntityHelpers.readObject(o, "maximum", Double.class);
-        
+        minimum = JSONEntityHelpers.readObject(o, "minimum", Double.class);
+        maximum = JSONEntityHelpers.readObject(o, "maximum", Double.class);
+
         return this;
     }
 
     @Override
-    public JSONObject   asJSON() {
+    public JSONObject asJSON() {
         final JSONObject ret = super.asJSON();
-        JSONEntityHelpers.addObject("minimum", __minimum, ret);
-        JSONEntityHelpers.addObject("maximum", __maximum, ret);
+        JSONEntityHelpers.addObject("minimum", minimum, ret);
+        JSONEntityHelpers.addObject("maximum", maximum, ret);
         return ret;
-    }    
-    
+    }
+
     public Double getMinimum() {
-        return __minimum;
+        return minimum;
     }
+
     public Double getMaximum() {
-        return __maximum;
+        return maximum;
     }
-    
+
     public void setMinimum(Double d) {
-        __minimum = d;
+        minimum = d;
     }
-    
-    public void setMaximum(Double d ) {
-        __maximum = d;
+
+    public void setMaximum(Double d) {
+        maximum = d;
     }
-    
 }

@@ -1,58 +1,51 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package io.webthings.webthing.server;
 
 import io.webthings.webthing.affordances.ActionAffordance;
 
 /**
- *
  * @author Lorenzo
  */
 public abstract class Action implements Runnable {
-    private String              __name;
-    private ActionAffordance    __data;
-    private Class               __handler;
-    
-    private ThingObject         __owner;
-    
-    public ThingObject          getOwner() {
-        return  __owner;
+    private String name;
+    private ActionAffordance data;
+    private Class handler;
+    private ThingObject owner;
+
+    public ThingObject getOwner() {
+        return owner;
     }
-    
-    public void setOwner(ThingObject o)  {
-        __owner = o;
+
+    public void setOwner(ThingObject o) {
+        owner = o;
     }
-    
-    public Action(String name, ActionAffordance data,Class h) {
-        __name = name;
-        __data = data;
-        __handler = h;
+
+    public Action(String name, ActionAffordance data, Class h) {
+        this.name = name;
+        this.data = data;
+        handler = h;
     }
-    
+
     public ActionAffordance getData() {
-        return __data;
+        return data;
     }
-    
+
     public void setData(ActionAffordance d) {
-        __data = d;
+        data = d;
     }
-    
-    public void setName(String s ) {
-        __name = s;
+
+    public void setName(String s) {
+        name = s;
     }
-    
+
     public String getName() {
-        return __name;
+        return name;
     }
-    
+
     public Class getHandler() {
-        return __handler;
+        return handler;
     }
-    
-    public void setHandler(Class c ) {
-        __handler = c;
+
+    public void setHandler(Class c) {
+        handler = c;
     }
 }

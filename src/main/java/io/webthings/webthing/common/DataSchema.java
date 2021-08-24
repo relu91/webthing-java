@@ -6,12 +6,13 @@
 package io.webthings.webthing.common;
 
 import io.webthings.webthing.JSONEntity;
+
 import static io.webthings.webthing.common.JSONEntityHelpers.addCollection;
 import static io.webthings.webthing.common.JSONEntityHelpers.addJSONEntityCollection;
 import static io.webthings.webthing.common.JSONEntityHelpers.addObject;
 import static io.webthings.webthing.common.JSONEntityHelpers.addSingleItemOrList;
 import static io.webthings.webthing.common.JSONEntityHelpers.addString;
-import static io.webthings.webthing.common.JSONEntityHelpers.checkedInitList;
+
 import io.webthings.webthing.common.dataSchemas.ArraySchema;
 import io.webthings.webthing.common.dataSchemas.BooleanSchema;
 import io.webthings.webthing.common.dataSchemas.IntegerSchema;
@@ -20,213 +21,248 @@ import io.webthings.webthing.common.dataSchemas.NumberSchema;
 import io.webthings.webthing.common.dataSchemas.ObjectSchema;
 import io.webthings.webthing.common.dataSchemas.StringSchema;
 import io.webthings.webthing.exceptions.WoTException;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+
 import org.json.JSONObject;
 
 /**
- *
  * @author Lorenzo
  */
 public class DataSchema extends JSONEntity {
-    public   enum   typeId {
-        tiObject,
-        tiArray,
-        tiNumber,
-        tiBoolean,
-        tiString,
-        tiInteger,
-        tiNull
+    public enum typeId {
+        tiObject, tiArray, tiNumber, tiBoolean, tiString, tiInteger, tiNull
     }
-    private     String                   __title;
-    private     Map<String,String>       __titles;
-    private     String                   __description;
-    private     Map<String,String>       __descriptions;
-    private     List<String>             __types;
-    
-    private     typeId                  __jsonType;
-    private     Object                  __const;
-    private     String                  __unit;
-    private     List<DataSchema>        __oneOf;
-    private     List<Object>            __enum;
-    private     Boolean                 __readOnly;
-    private     Boolean                 __writeOnly;
-    private     String                  __format;
-    
+
+    private String title;
+    private Map<String, String> titles;
+    private String description;
+    private Map<String, String> descriptions;
+    private List<String> types;
+    private typeId jsonType;
+    private Object __const;
+    private String unit;
+    private List<DataSchema> oneOf;
+    private List<Object> __enum;
+    private Boolean readOnly;
+    private Boolean writeOnly;
+    private String format;
+
     public DataSchema() {
         //when type is not specified !!! 
-        __jsonType = null;
-        
+        jsonType = null;
     }
+
     protected DataSchema(typeId id) {
-        __jsonType = id;
+        jsonType = id;
     }
-    
+
     public void setType(String t) {
-        __types = new ArrayList<>();
-        __types.add(t);
+        types = new ArrayList<>();
+        types.add(t);
     }
+
     public String getType() {
         String ret = null;
-        if (__types != null && __types.size() >= 1) {
-            ret = __types.get(0);
+        if (types != null && types.size() >= 1) {
+            ret = types.get(0);
         }
         return ret;
     }
-    
+
     public List<String> getTypes() {
-        return  __types;
+        return types;
     }
+
     public void addType(String t) {
-        if (__types  == null)
+        if (types == null) {
             setType(t);
-        else
-            __types.add(t);
+        } else {
+            types.add(t);
+        }
     }
-    
+
     public void setDefaultTitle(String t) {
-        __title = t;
+        title = t;
     }
+
     public String getDefaultTitle() {
-        return __title;
+        return title;
     }
+
     public void setI18NTitle(String lang, String t) {
-        if (__titles == null)  
-            __titles = new TreeMap<>();
-        
-        __titles.put(lang, t);
+        if (titles == null) {
+            titles = new TreeMap<>();
+        }
+
+        titles.put(lang, t);
     }
+
     public String getI18NTitle(String lang) {
         String ret = null;
-        if (__titles != null)
-            ret =  __titles.get(lang);
-        
+        if (titles != null) {
+            ret = titles.get(lang);
+        }
+
         return ret;
     }
+
     public void removeI18NTitle(String lang) {
-        if (__titles != null)
-            __titles.remove(lang);
+        if (titles != null) {
+            titles.remove(lang);
+        }
     }
+
     public void setDefaultDescription(String d) {
-        __description = d;
+        description = d;
     }
 
     public String getDefaultDescription() {
-        return __description;
+        return description;
     }
-    public void setI18NDescription(String lang, String  d) {
-        if (__descriptions == null) {
-            __descriptions = new TreeMap<>();
+
+    public void setI18NDescription(String lang, String d) {
+        if (descriptions == null) {
+            descriptions = new TreeMap<>();
         }
-        __descriptions.put(lang, d);
-        
+        descriptions.put(lang, d);
     }
-    
+
     public String getI18NDescription(String lang) {
         String ret = null;
-        if (__descriptions != null)
-            ret = __descriptions.get(lang);
-        
+        if (descriptions != null) {
+            ret = descriptions.get(lang);
+        }
+
         return ret;
     }
-    
+
     public void removeI18NDescription(String lang) {
-        if (__descriptions != null)
-            __descriptions.remove(lang);
+        if (descriptions != null) {
+            descriptions.remove(lang);
+        }
     }
+
     public void setReadOnly(boolean f) {
-        __readOnly = f;
+        readOnly = f;
     }
+
     public boolean getReadOnly() {
-        return  __readOnly;
+        return readOnly;
     }
+
     public void setWriteOnly(boolean f) {
-        __writeOnly = f;
+        writeOnly = f;
     }
+
     public boolean getWriteOnly() {
-        return  __writeOnly;
+        return writeOnly;
     }
-       
+
     public typeId getJSONType() {
-        return __jsonType;
+        return jsonType;
     }
- /*   
-    public void setJSONType(typeId s ) {
-        __jsonType = s;
-    }
-*/    
+
+    /*
+       public void setJSONType(typeId s ) {
+           jsonType = s;
+       }
+   */
     public List<DataSchema> getOneOf() {
-        return __oneOf;
+        return oneOf;
     }
-    
+
     public void addOneOf(DataSchema d) {
-        if (__oneOf == null)
-            __oneOf = new ArrayList<>();
-        
-        __oneOf.add(d);
+        if (oneOf == null) {
+            oneOf = new ArrayList<>();
+        }
+
+        oneOf.add(d);
     }
-    
+
     public List<Object> getEnum() {
-        return  __enum;
+        return __enum;
     }
-    
-    public void addEnum(Object o ) {
-        if (__enum == null)
+
+    public void addEnum(Object o) {
+        if (__enum == null) {
             __enum = new ArrayList<>();
-        
+        }
+
         __enum.add(o);
     }
-    
-    public void setFormat(String s ) {
-        __format = s;
+
+    public void setFormat(String s) {
+        format = s;
     }
-    
+
     public String getFormat() {
-        return __format;
+        return format;
     }
-    public JSONObject   asJSON() {
+
+    public JSONObject asJSON() {
         final JSONObject ret = new JSONObject();
-        
-        addSingleItemOrList("@type", __types, ret);
-        
-        addString("title",__title, ret);
-        addCollection("titles", __titles, ret);
-        addString("description",__description,ret);
-        addCollection("descriptions",__descriptions,ret);
-        addString("type",decodeTypeId(__jsonType),ret);
+
+        addSingleItemOrList("@type", types, ret);
+
+        addString("title", title, ret);
+        addCollection("titles", titles, ret);
+        addString("description", description, ret);
+        addCollection("descriptions", descriptions, ret);
+        addString("type", decodeTypeId(jsonType), ret);
         addCollection("enum", __enum, ret);
-        addJSONEntityCollection("oneOf", __oneOf, ret);
-        addObject("readOnly", __readOnly, ret);
-        addObject("writeOnly", __writeOnly, ret);
-        addString("format", __format, ret);
+        addJSONEntityCollection("oneOf", oneOf, ret);
+        addObject("readOnly", readOnly, ret);
+        addObject("writeOnly", writeOnly, ret);
+        addString("format", format, ret);
         return ret;
     }
 
     @Override
     public JSONEntity fromJSON(JSONObject o) throws WoTException {
-        __title = JSONEntityHelpers.readObject(o, "title", String.class);
-        __titles = JSONEntityHelpers.readCollection(o, "titles", String.class,TreeMap.class);
-        __description = JSONEntityHelpers.readObject(o, "description", String.class);
-        __descriptions = JSONEntityHelpers.readCollection(o, "descriptions", String.class,TreeMap.class);
-        __types = JSONEntityHelpers.readObjectSingleOrList(o, "@type", String.class, ArrayList.class);
-        final String jsonType = JSONEntityHelpers.readObject(o, "type", String.class);
-        __jsonType = decodeTypeId(jsonType);
+        title = JSONEntityHelpers.readObject(o, "title", String.class);
+        titles = JSONEntityHelpers.readCollection(o,
+                                                  "titles",
+                                                  String.class,
+                                                  TreeMap.class);
+        description =
+                JSONEntityHelpers.readObject(o, "description", String.class);
+        descriptions = JSONEntityHelpers.readCollection(o,
+                                                        "descriptions",
+                                                        String.class,
+                                                        TreeMap.class);
+        types = JSONEntityHelpers.readObjectSingleOrList(o,
+                                                         "@type",
+                                                         String.class,
+                                                         ArrayList.class);
+        final String jsonType =
+                JSONEntityHelpers.readObject(o, "type", String.class);
+        this.jsonType = decodeTypeId(jsonType);
         __const = JSONEntityHelpers.readObject(o, "const", Object.class);
-        __unit = JSONEntityHelpers.readObject(o, "unit", String.class);
-        __enum = JSONEntityHelpers.readCollection(o, "enum", Object.class,ArrayList.class);
-        __oneOf = JSONEntityHelpers.readEntityCollection(o, "oneOf", DataSchema.class, ArrayList.class);
+        unit = JSONEntityHelpers.readObject(o, "unit", String.class);
+        __enum = JSONEntityHelpers.readCollection(o,
+                                                  "enum",
+                                                  Object.class,
+                                                  ArrayList.class);
+        oneOf = JSONEntityHelpers.readEntityCollection(o,
+                                                       "oneOf",
+                                                       DataSchema.class,
+                                                       ArrayList.class);
 
-          
+
         return this;
     }
+
     public static DataSchema newInstance(typeId id) {
-        if (id == null)
+        if (id == null) {
             return null;
-        
+        }
+
         DataSchema ret = null;
-        switch(id) {
+        switch (id) {
             case tiArray:
                 ret = new ArraySchema();
                 break;
@@ -249,21 +285,25 @@ public class DataSchema extends JSONEntity {
                 ret = new StringSchema();
                 break;
         }
-        
+
         return ret;
     }
-    public static DataSchema newInstance(JSONObject o ) throws WoTException {
-        final String jsonType = JSONEntityHelpers.readObject(o, "type", String.class);   
+
+    public static DataSchema newInstance(JSONObject o) throws WoTException {
+        final String jsonType =
+                JSONEntityHelpers.readObject(o, "type", String.class);
         final typeId id = decodeTypeId(jsonType);
         final DataSchema ret = newInstance(id);
-        if (ret != null)
+        if (ret != null) {
             ret.fromJSON(o);
-        
+        }
+
         return ret;
     }
-    private static typeId decodeTypeId(String id ) {
+
+    private static typeId decodeTypeId(String id) {
         typeId ret = null;
-        switch(id.trim()) {
+        switch (id.trim()) {
             case "array":
                 ret = typeId.tiArray;
                 break;
@@ -279,23 +319,25 @@ public class DataSchema extends JSONEntity {
             case "number":
                 ret = typeId.tiNumber;
                 break;
-            case  "object":
+            case "object":
                 ret = typeId.tiObject;
                 break;
             case "string":
                 ret = typeId.tiString;
                 break;
         }
-        
+
         return ret;
     }
-    private static String decodeTypeId(typeId id )  {
-        if (id == null)
+
+    private static String decodeTypeId(typeId id) {
+        if (id == null) {
             return null;
-        
+        }
+
         String ret = null;
-        
-        switch(id) {
+
+        switch (id) {
             case tiArray:
                 ret = "array";
                 break;
@@ -311,14 +353,14 @@ public class DataSchema extends JSONEntity {
             case tiNumber:
                 ret = "number";
                 break;
-            case  tiObject:
+            case tiObject:
                 ret = "object";
                 break;
             case tiString:
                 ret = "string";
                 break;
         }
-        
+
         return ret;
     }
 }

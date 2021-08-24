@@ -1,77 +1,72 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package io.webthings.webthing.common;
 
 import io.webthings.webthing.JSONEntity;
 import io.webthings.webthing.exceptions.MissingFieldException;
 import io.webthings.webthing.exceptions.WoTException;
+
 import org.json.JSONObject;
 
 /**
- *
  * @author Lorenzo
  */
 public class Link extends JSONEntity {
-    private java.net.URI        __href;
-    private String              __type;
-    private String              __rel;
-    private java.net.URI        __anchor;
-    
-    
+    private java.net.URI href;
+    private String type;
+    private String rel;
+    private java.net.URI anchor;
+
     public java.net.URI getHref() {
-        return __href;
+        return href;
     }
-    
+
     public void setHRef(java.net.URI h) {
-        __href = h;
+        href = h;
     }
-    
+
     public String getType() {
-        return __type;
+        return type;
     }
-    public void setType(String s ) {
-        __type = s;
+
+    public void setType(String s) {
+        type = s;
     }
-    
+
     public String getRel() {
-        return  __rel;
+        return rel;
     }
-    
-    public void setRel(String s ) {
-        __rel = s;
+
+    public void setRel(String s) {
+        rel = s;
     }
-    
+
     public java.net.URI getAnchor() {
-        return __anchor;
+        return anchor;
     }
-    
+
     public void setAnchor(java.net.URI a) {
-        __anchor = a;
+        anchor = a;
     }
 
     @Override
     public JSONObject asJSON() throws WoTException {
         final JSONObject ret = new JSONObject();
-        JSONEntityHelpers.addURI("href", __href, ret);
-        JSONEntityHelpers.addURI("anchor", __anchor, ret);
-        JSONEntityHelpers.addString("rel", __rel, ret);
-        JSONEntityHelpers.addString("type", __type, ret);
-        
-        
+        JSONEntityHelpers.addURI("href", href, ret);
+        JSONEntityHelpers.addURI("anchor", anchor, ret);
+        JSONEntityHelpers.addString("rel", rel, ret);
+        JSONEntityHelpers.addString("type", type, ret);
+
+
         return ret;
     }
 
     @Override
     public JSONEntity fromJSON(JSONObject o) throws WoTException {
-        __rel = JSONEntityHelpers.readObject(o, "rel", String.class);
-        __type = JSONEntityHelpers.readObject(o, "type", String.class);
-        __href = JSONEntityHelpers.readURI(o, "href");
-        __anchor = JSONEntityHelpers.readURI(o, "anchor");
-        
-        if (__href == null) {
+        rel = JSONEntityHelpers.readObject(o, "rel", String.class);
+        type = JSONEntityHelpers.readObject(o, "type", String.class);
+        href = JSONEntityHelpers.readURI(o, "href");
+        anchor = JSONEntityHelpers.readURI(o, "anchor");
+
+        if (href == null) {
             throw new MissingFieldException("href");
         }
         return this;

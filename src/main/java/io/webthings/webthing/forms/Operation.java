@@ -1,35 +1,32 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package io.webthings.webthing.forms;
 
 import io.webthings.webthing.exceptions.InvalidFieldException;
 
 /**
- *
  * @author Lorenzo
  */
 public class Operation {
     public enum id {
-        readproperty, 
-        writeproperty, 
-        observeproperty, 
-        unobserveproperty, 
-        invokeaction, 
-        subscribeevent, 
-        unsubscribeevent, 
-        readallproperties, 
-        writeallproperties, 
+        readproperty,
+        writeproperty,
+        observeproperty,
+        unobserveproperty,
+        invokeaction,
+        subscribeevent,
+        unsubscribeevent,
+        readallproperties,
+        writeallproperties,
         readmultipleproperties,
         writemultipleproperties
-    };
+    }
+
+    ;
+
     public static id decodeId(String i) throws InvalidFieldException {
-        
+
         id ret = null;
-        
-        switch(i) {
+
+        switch (i) {
             case "readproperty":
                 ret = id.readproperty;
                 break;
@@ -57,7 +54,7 @@ public class Operation {
             case "writeallproperties":
                 ret = id.writeallproperties;
                 break;
-                
+
             case "readmultipleproperties":
                 ret = id.readmultipleproperties;
                 break;
@@ -66,15 +63,14 @@ public class Operation {
                 break;
             default:
                 throw new InvalidFieldException("operation", i);
-            
         }
-        
-        return ret;        
- 
+
+        return ret;
     }
-    public static String decodeId(id i) throws InvalidFieldException{
+
+    public static String decodeId(id i) throws InvalidFieldException {
         String ret = null;
-        switch(i) {
+        switch (i) {
             case readproperty:
                 ret = "readproperty";
                 break;
@@ -102,7 +98,7 @@ public class Operation {
             case writeallproperties:
                 ret = "writeallproperties";
                 break;
-                
+
             case readmultipleproperties:
                 ret = "readmultipleproperties";
                 break;
@@ -111,9 +107,8 @@ public class Operation {
                 break;
             default:
                 throw new InvalidFieldException("operation", i.toString());
-            
         }
-        
+
         return ret;
     }
 }

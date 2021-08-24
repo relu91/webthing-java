@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package io.webthings.webthing.server;
 
 import fi.iki.elonen.NanoHTTPD;
@@ -15,67 +10,67 @@ import io.webthings.webthing.server.securityHandlers.BasicSecurityHandler;
 import io.webthings.webthing.server.securityHandlers.DigestSecurityHandler;
 import io.webthings.webthing.server.securityHandlers.NoSecurityHandler;
 import io.webthings.webthing.server.securityHandlers.OAuth2SecurityHandler;
+
 import java.util.Map;
 import java.util.Set;
 
 /**
- *
  * @author Lorenzo
  */
 public abstract class SecurityHandler {
-    
-    public abstract boolean doSecurityCheck(SecurityScheme sc,NanoHTTPD.IHTTPSession  session) throws WoTException;
-    
-    public static boolean checkAccess (
-        ThingData                   td,
-        Form                        f,
-        NanoHTTPD.IHTTPSession  session
-    )throws WoTException{
-        Set<String>    securityNames = f.getSecurity();
-        
-        if (securityNames == null || securityNames.size() == 0 ) {
+    public abstract boolean doSecurityCheck(SecurityScheme sc,
+                                            NanoHTTPD.IHTTPSession session)
+            throws WoTException;
+
+    public static boolean checkAccess(ThingData td,
+                                      Form f,
+                                      NanoHTTPD.IHTTPSession session)
+            throws WoTException {
+        Set<String> securityNames = f.getSecurity();
+
+        if (securityNames == null || securityNames.size() == 0) {
             securityNames = td.getSecurities();
         }
-        
-        if (securityNames == null || securityNames.size() == 0 ) {
+
+        if (securityNames == null || securityNames.size() == 0) {
             return false;   //a security of some sort must exist, reject loaded thing
         }
-        
+
         try {
             boolean ret = true;
-            for(final String name : securityNames) {
-                final SecurityHandler sh = SecurityHandler.newInstance(name, td);
-                final SecurityScheme  sc = td.getSecurityDefinitions().get(name);
-                
-                ret = ret && sh.doSecurityCheck(sc,session);
+            for (final String name : securityNames) {
+                final SecurityHandler sh =
+                        SecurityHandler.newInstance(name, td);
+                final SecurityScheme sc = td.getSecurityDefinitions().get(name);
+
+                ret = ret && sh.doSecurityCheck(sc, session);
             }
             return ret;
-        } catch(InvalidSecurityException e ) {
+        } catch (InvalidSecurityException e) {
             return false;
         }
-        
-        
     }
-    
-    private static SecurityHandler newInstance(String name,ThingData td) throws InvalidSecurityException{
+
+    private static SecurityHandler newInstance(String name, ThingData td)
+            throws InvalidSecurityException {
         //check 
         final Map<String, SecurityScheme> secMap = td.getSecurityDefinitions();
-        
-        if (secMap ==  null || secMap.size() == 0 ) {
+
+        if (secMap == null || secMap.size() == 0) {
             throw new InvalidSecurityException(name);
         }
-        
+
         final SecurityScheme sc = secMap.get(name);
-        
+
         if (sc == null) {
             throw new InvalidSecurityException(name);
         }
-        
-        
-        final SecurityScheme.typeId id  = sc.getScheme();
-        
+
+
+        final SecurityScheme.typeId id = sc.getScheme();
+
         SecurityHandler ret = null;
-        switch(id) {
+        switch (id) {
             case siApikey:
                 break;
             case siBasic:
@@ -95,17 +90,18 @@ public abstract class SecurityHandler {
             case siPsk:
                 break;
         }
-        
+
         return ret;
     }
-   
-    protected static String findHeader(String name, NanoHTTPD.IHTTPSession sess) {
+
+    protected static String findHeader(String name,
+                                       NanoHTTPD.IHTTPSession sess) {
         String ret = null;
-        final Map<String,String> headers = sess.getHeaders();
+        final Map<String, String> headers = sess.getHeaders();
         if (headers != null) {
             ret = headers.get(name);
         }
-        
+
         return ret;
     }
 }

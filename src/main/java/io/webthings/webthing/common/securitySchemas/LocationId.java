@@ -1,31 +1,23 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package io.webthings.webthing.common.securitySchemas;
 
 import io.webthings.webthing.exceptions.InvalidFieldException;
 import io.webthings.webthing.exceptions.WoTException;
 
 /**
- *
  * @author Lorenzo
  */
 public class LocationId {
     public enum typeId {
-        liHeader,
-        liBody,
-        liCookie,
-        liQuery
+        liHeader, liBody, liCookie, liQuery
     }
-    
-    public static String  decodeTypeId(typeId id) {
+
+    public static String decodeTypeId(typeId id) {
         String ret = null;
-        if (id == null)
+        if (id == null) {
             return ret;
-        
-        switch(id) {
+        }
+
+        switch (id) {
             case liBody:
                 ret = "body";
                 break;
@@ -39,17 +31,17 @@ public class LocationId {
                 ret = "query";
                 break;
         }
-        
+
         return ret;
     }
-    
-    
-    public static typeId decodeTypeId(String s ) throws WoTException{
+
+    public static typeId decodeTypeId(String s) throws WoTException {
         typeId ret = null;
-        if (s == null || s.length() == 0 )
+        if (s == null || s.length() == 0) {
             return ret;
-        
-        switch(s) {
+        }
+
+        switch (s) {
             case "header":
                 ret = typeId.liHeader;
                 break;
@@ -63,9 +55,9 @@ public class LocationId {
                 ret = typeId.liCookie;
                 break;
             default:
-                throw new InvalidFieldException("in",s);
+                throw new InvalidFieldException("in", s);
         }
-        
+
         return ret;
     }
 }

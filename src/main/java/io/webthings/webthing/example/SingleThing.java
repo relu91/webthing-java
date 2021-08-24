@@ -138,35 +138,4 @@ public class SingleThing {
             System.exit(1);
         }
     }
-/*
-    public static class OverheatedEvent extends Event {
-        public OverheatedEvent(Thing thing, int data) {
-            super(thing, "overheated", data);
-        }
-    }
-
-    public static class FadeAction extends Action {
-        public FadeAction(Thing thing, JSONObject input) {
-            super(UUID.randomUUID().toString(), thing, "fade", input);
-        }
-
-        @Override
-        public void performAction() {
-            Thing thing = this.getThing();
-            JSONObject input = this.getInput();
-            try {
-                Thread.sleep(input.getInt("duration"));
-            } catch (InterruptedException e) {
-                // pass
-            }
-
-            try {
-                thing.setProperty("brightness", input.getInt("brightness"));
-                thing.addEvent(new OverheatedEvent(thing, 102));
-            } catch (PropertyError e) {
-                // pass
-            }
-        }
-    }
-*/
 }

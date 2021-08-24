@@ -1,60 +1,61 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package io.webthings.webthing.server;
 
 import fi.iki.elonen.NanoHTTPD.IHTTPSession;
 import fi.iki.elonen.NanoWSD;
+
 import java.io.IOException;
+
 import org.json.JSONObject;
 
 /**
- *
  * @author Lorenzo
  */
 public class ThingWebSocket extends NanoWSD.WebSocket {
-    private final   boolean __is_property;
-    private final   String  __path;
-    public ThingWebSocket(IHTTPSession handshakeRequest,boolean isProperty,String path) {
+    private final boolean isProperty;
+    private final String path;
+
+    public ThingWebSocket(IHTTPSession handshakeRequest,
+                          boolean isProperty,
+                          String path) {
         super(handshakeRequest);
-        __is_property = isProperty;
-        __path = path;
+        this.isProperty = isProperty;
+        this.path = path;
     }
-    
+
     private IObservable findObservable() {
-        final ManagedThingsCollection mti = ManagedThingsCollection.getInstance();
-        if (mti == null) 
+        final ManagedThingsCollection mti =
+                ManagedThingsCollection.getInstance();
+        if (mti == null) {
             return null;
-        final ThingObject               to = mti.getInteractionOwner(__path);        
-        if (to == null)
+        }
+        final ThingObject to = mti.getInteractionOwner(path);
+        if (to == null) {
             return null;
-        
-        final String                    iName = mti.getInteractionName(__path);        
-        if (iName == null) 
+        }
+
+        final String iName = mti.getInteractionName(path);
+        if (iName == null) {
             return null;
-        
+        }
+
         IObservable ret = null;
-        if (__is_property)  {
+        if (isProperty) {
             final Property p = to.getProperty(iName);
             ret = p;
         } else {
             final Event e = to.getEvent(iName);
             ret = e;
-            
         }
-        
+
         return ret;
-            
     }
+
     @Override
     protected void onOpen() {
         final IObservable tgt = findObservable();
         if (tgt != null) {
             tgt.addSuscriber(this);
         }
-        
     }
 
     /**
@@ -62,20 +63,16 @@ public class ThingWebSocket extends NanoWSD.WebSocket {
      *
      * @param code              The close code
      * @param reason            The close reason
-     * @param initiatedByRemote Whether or not the client closed the
-     *                          socket
+     * @param initiatedByRemote Whether or not the client closed the socket
      */
     @Override
-    protected void onClose(
-        NanoWSD.WebSocketFrame.CloseCode    code,
-        String                              reason,
-        boolean                             initiatedByRemote
-    ) {
+    protected void onClose(NanoWSD.WebSocketFrame.CloseCode code,
+                           String reason,
+                           boolean initiatedByRemote) {
         final IObservable tgt = findObservable();
         if (tgt != null) {
             tgt.removeSubscriber(this);
         }
-
     }
 
     /**
@@ -91,15 +88,15 @@ public class ThingWebSocket extends NanoWSD.WebSocket {
             JSONObject json = new JSONObject(data);
             if (json != null && json.has("type")) {
                 final String type = json.getString("type");
-                if (type.equals("unobserveproperty") || type.equals("unsubscribeevent")) {
+                if (type.equals("unobserveproperty") ||
+                        type.equals("unsubscribeevent")) {
                     final IObservable tgt = findObservable();
                     if (tgt != null) {
                         tgt.removeSubscriber(this);
                     }
-
                 }
             }
-        } catch(Exception e )         {
+        } catch (Exception e) {
             System.err.println(e);
         }
     }

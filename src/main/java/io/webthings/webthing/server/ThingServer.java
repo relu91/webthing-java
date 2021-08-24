@@ -1,19 +1,7 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-package io.webthings.webthing.server;
-
-/**
- *
- * @author Lorenzo
- */
 /**
  * Java Web Thing server implementation.
  */
-
-
+package io.webthings.webthing.server;
 
 import fi.iki.elonen.NanoHTTPD;
 import fi.iki.elonen.router.RouterNanoHTTPD;
@@ -36,7 +24,7 @@ public class ThingServer extends RouterNanoHTTPD {
     private static final int SOCKET_READ_TIMEOUT = 30 * 1000;
     private static final int WEBSOCKET_PING_INTERVAL = 20 * 1000;
     private final int port;
-    private final List<ThingObject>         __things;
+    private final List<ThingObject> things;
     private String hostname;
     private final boolean disableHostValidation;
     private final List<String> hosts;
@@ -107,8 +95,6 @@ public class ThingServer extends RouterNanoHTTPD {
      * @param port                  Port to listen on
      * @param hostname              Host name, i.e. mything.com
      * @param sslOptions            SSL options to pass to the NanoHTTPD server
-     * @param additionalRoutes      List of additional routes to add to the
-     *                              server
      * @param disableHostValidation Whether or not to disable host validation --
      *                              note that this can lead to DNS rebinding
      *                              attacks
@@ -126,7 +112,7 @@ public class ThingServer extends RouterNanoHTTPD {
     ) throws IOException, NullPointerException {
         super(port);
         this.port = port;
-        this.__things = things;
+        this.things = things;
         this.isTls = sslOptions != null;
         this.hostname = hostname;
         this.disableHostValidation = disableHostValidation;
@@ -155,7 +141,7 @@ public class ThingServer extends RouterNanoHTTPD {
         //load all thing data
         final ManagedThingsCollection mti = ManagedThingsCollection.getInstance();
 
-        for(final ThingObject to : __things) {
+        for(final ThingObject to : this.things) {
             final ThingData td = to.getData();
             mti.add(to);
              

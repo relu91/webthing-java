@@ -1,19 +1,7 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+/**
+ * ChatClientEndpoint.java http://programmingforliving.com
  */
 package io.webthings.webthing.server;
-
-/**
- *
- * @author Lorenzo
- */
-/**
- * ChatClientEndpoint.java
- * http://programmingforliving.com
- */
-
 
 import java.net.URI;
 
@@ -28,23 +16,23 @@ import javax.websocket.WebSocketContainer;
 
 /**
  * ChatServer Client
- * 
+ *
  * @author Jiji_Sasidharan
  */
 @ClientEndpoint
 public class WebsocketClient {
     Session userSession = null;
     private MessageHandler messageHandler;
-    private String  __last_msg;
-    
+    private String __last_msg;
+
     public String getLastMsg() {
         return __last_msg;
     }
 
     public WebsocketClient(URI endpointURI) {
         try {
-            WebSocketContainer container = ContainerProvider
-                    .getWebSocketContainer();
+            WebSocketContainer container =
+                    ContainerProvider.getWebSocketContainer();
             container.connectToServer(this, endpointURI);
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -53,9 +41,8 @@ public class WebsocketClient {
 
     /**
      * Callback hook for Connection open events.
-     * 
-     * @param userSession
-     *            the userSession which is opened.
+     *
+     * @param userSession the userSession which is opened.
      */
     @OnOpen
     public void onOpen(Session userSession) {
@@ -64,11 +51,9 @@ public class WebsocketClient {
 
     /**
      * Callback hook for Connection close events.
-     * 
-     * @param userSession
-     *            the userSession which is getting closed.
-     * @param reason
-     *            the reason for connection close
+     *
+     * @param userSession the userSession which is getting closed.
+     * @param reason      the reason for connection close
      */
     @OnClose
     public void onClose(Session userSession, CloseReason reason) {
@@ -78,26 +63,24 @@ public class WebsocketClient {
     /**
      * Callback hook for Message Events. This method will be invoked when a
      * client send a message.
-     * 
-     * @param message
-     *            The text message
+     *
+     * @param message The text message
      */
     @OnMessage
     public void onMessage(String message) {
         __last_msg = message;
-        synchronized(this) {
+        synchronized (this) {
             this.notify();
         }
 /*        
         if (this.messageHandler != null)
             this.messageHandler.handleMessage(message);
-*/        
+*/
     }
 
     /**
      * register message handler
-     * 
-     * @param message
+     *
      */
     public void addMessageHandler(MessageHandler msgHandler) {
         this.messageHandler = msgHandler;
@@ -105,8 +88,7 @@ public class WebsocketClient {
 
     /**
      * Send a message.
-     * 
-     * @param user
+     *
      * @param message
      */
     public void sendMessage(String message) {
@@ -115,7 +97,7 @@ public class WebsocketClient {
 
     /**
      * Message handler.
-     * 
+     *
      * @author Jiji_Sasidharan
      */
     public static interface MessageHandler {

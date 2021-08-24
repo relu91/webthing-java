@@ -1,17 +1,11 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package io.webthings.webthing.common.securitySchemas;
 
 import io.webthings.webthing.common.SecurityScheme;
 
 /**
- *
  * @author Lorenzo
  */
-public class NoSecurityScheme extends SecurityScheme{
+public class NoSecurityScheme extends SecurityScheme {
     public NoSecurityScheme() {
         super(typeId.siNosec);
     }
