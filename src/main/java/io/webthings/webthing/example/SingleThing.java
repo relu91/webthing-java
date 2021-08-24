@@ -6,11 +6,13 @@ import io.webthings.webthing.affordances.EventAffordance;
 import io.webthings.webthing.affordances.PropertyAffordance;
 import io.webthings.webthing.common.SecurityScheme;
 import io.webthings.webthing.common.ExposeThingInit;
+import io.webthings.webthing.common.dataSchemas.StringSchema;
 import io.webthings.webthing.exceptions.WoTException;
 import io.webthings.webthing.forms.Form;
 import io.webthings.webthing.forms.Operation;
 import io.webthings.webthing.server.Action;
 import io.webthings.webthing.server.Event;
+import io.webthings.webthing.server.Property;
 import io.webthings.webthing.server.SyncActionHandler;
 import io.webthings.webthing.server.ExposedWebThing;
 import io.webthings.webthing.server.ThingServer;
@@ -39,15 +41,25 @@ public class SingleThing {
         
     }
     public static class ToggleAction extends Action {
-        private boolean  __state = false;
         public ToggleAction(String name, ActionAffordance data,Class h) {
             super(name, data, h);
         }
 
         public void run() {
-            System.out.println("Current state : " + __state);
-            __state = !__state;
-            System.out.println("New  state : " + __state);
+            final Property status = this.getOwner().getProperty("status");
+            final String value = (String)status.getValue();
+
+            System.out.println("Current state : " + value);
+            switch (value) {
+                case "on":
+                    status.setValue("off");
+                    break;
+                case "off":
+                    status.setValue("on");
+                    break;
+            }
+
+            System.out.println("New  state : " + status.getValue());
             
             //fire toggled event
             final Event e = getOwner().getEvent("toggled");
@@ -58,20 +70,25 @@ public class SingleThing {
 
     }
     
-    private static void addProperty(String title, String desc, String href, Operation.id op,
-                                    ExposeThingInit tgt)throws URISyntaxException,WoTException {
+    private static void addStatusProperty(ExposeThingInit thingInit)throws URISyntaxException,WoTException {
+        String title = "Status";
+        String desc = "Current status";
+        String href= "/single/status";
+        Operation.id op = Operation.id.readproperty;
+
         final PropertyAffordance pa  = new PropertyAffordance();
         pa.setDefaultTitle(title);
         pa.setDefaultDescription(desc);
+        final StringSchema schema = new StringSchema();
+        schema.addEnum("on");
+        schema.addEnum("off");
+        pa.setDataSchema(schema);
+
         final Form f = new Form(href);
-        
-       
-        if (op != null)
-            f.setOperation(op);
+        f.setOperation(op);
         
         pa.addForm(f);
-        tgt.addProperty("name", pa);
-        
+        thingInit.addProperty("status", pa);
     }
     private static void addMetadataForm(String href, Operation.id op,
                                         ExposeThingInit tgt)throws URISyntaxException,WoTException {
@@ -88,7 +105,8 @@ public class SingleThing {
     public static List<ExposedWebThing> makeThing() throws URISyntaxException,WoTException{
         final List<ExposedWebThing> ret = new ArrayList<>();
         final ExposeThingInit td = new ExposeThingInit();
-        addProperty("name","The real name","/single/name",Operation.id.readproperty,td);
+        addStatusProperty(td);
+
         addMetadataForm("/single/allprops",Operation.id.readallproperties,td);
         
         final ActionAffordance aa_toggle = new ActionAffordance();
@@ -103,7 +121,7 @@ public class SingleThing {
         final EventAffordance ee_onoff = new EventAffordance();
         ee_onoff.addForm(new Form("/single/toggled"));
         ee_onoff.setDefaultTitle("Toggled");
-        ee_onoff.setDefaultDescription("Toggled Action");
+        ee_onoff.setDefaultDescription("Toggled Event");
         td.addEvent("toggled", ee_onoff);
         
         td.addSecurity("basic_sc");
@@ -113,6 +131,7 @@ public class SingleThing {
         td.addSecurityDefinition("basic_sc", sc);
         
         final ExposedWebThing to = new ExposedWebThing(td);
+        to.getProperty("status").setValue("off");
         to.addAction(new ToggleAction("toggle",aa_toggle,SyncActionHandler.class));
         to.addEvent(new ToggleEvent("toggled",ee_onoff));
         

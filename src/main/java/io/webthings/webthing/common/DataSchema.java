@@ -151,7 +151,7 @@ public class DataSchema extends JSONEntity {
     }
 
     public boolean getReadOnly() {
-        return readOnly;
+        return readOnly ==  null ? false : writeOnly;
     }
 
     public void setWriteOnly(boolean f) {
@@ -159,7 +159,7 @@ public class DataSchema extends JSONEntity {
     }
 
     public boolean getWriteOnly() {
-        return writeOnly;
+        return writeOnly ==  null ? false : writeOnly;
     }
 
     public typeId getJSONType() {
