@@ -1,7 +1,7 @@
 package io.webthings.webthing.server;
 
 import io.webthings.webthing.affordances.PropertyAffordance;
-import io.webthings.webthing.common.ThingData;
+import io.webthings.webthing.common.ExposeThingInit;
 
 import java.util.Map;
 import java.util.TreeMap;
@@ -9,13 +9,13 @@ import java.util.TreeMap;
 /**
  * @author Lorenzo
  */
-public class ThingObject {
-    private final ThingData data;
+public class ExposedWebThing {
+    private final ExposeThingInit data;
     private final Map<String, Property> properties = new TreeMap<>();
     private final Map<String, Action> actions = new TreeMap<>();
     private final Map<String, Event> events = new TreeMap<>();
 
-    public ThingObject(ThingData d) {
+    public ExposedWebThing(ExposeThingInit d) {
         data = d;
 
         for (final Map.Entry<String, PropertyAffordance> e : d.getProperties()
@@ -26,7 +26,7 @@ public class ThingObject {
         }
     }
 
-    public ThingData getData() {
+    public ExposeThingInit getData() {
         return data;
     }
 

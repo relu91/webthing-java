@@ -9,13 +9,13 @@ public abstract class Action implements Runnable {
     private String name;
     private ActionAffordance data;
     private Class handler;
-    private ThingObject owner;
+    private ExposedWebThing owner;
 
-    public ThingObject getOwner() {
+    public ExposedWebThing getOwner() {
         return owner;
     }
 
-    public void setOwner(ThingObject o) {
+    public void setOwner(ExposedWebThing o) {
         owner = o;
     }
 

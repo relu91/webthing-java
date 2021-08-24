@@ -4,7 +4,7 @@ import io.webthings.webthing.affordances.ActionAffordance;
 import io.webthings.webthing.affordances.EventAffordance;
 import io.webthings.webthing.affordances.PropertyAffordance;
 import io.webthings.webthing.common.SecurityScheme;
-import io.webthings.webthing.common.ThingData;
+import io.webthings.webthing.common.ExposeThingInit;
 import io.webthings.webthing.exceptions.WoTException;
 import io.webthings.webthing.forms.Form;
 import io.webthings.webthing.forms.Operation;
@@ -19,15 +19,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.json.JSONObject;
-import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Assert;
 
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
@@ -38,7 +34,7 @@ public class ThingServerIT {
                                     String desc,
                                     String href,
                                     Operation.id op,
-                                    ThingData tgt)
+                                    ExposeThingInit tgt)
             throws URISyntaxException, WoTException {
         final PropertyAffordance pa = new PropertyAffordance();
         pa.setDefaultTitle(title);
@@ -56,7 +52,7 @@ public class ThingServerIT {
 
     private static void addMetadataForm(String href,
                                         Operation.id op,
-                                        ThingData tgt)
+                                        ExposeThingInit tgt)
             throws URISyntaxException, WoTException {
         final Form f = new Form(href);
 
@@ -67,10 +63,10 @@ public class ThingServerIT {
         tgt.addForm(f);
     }
 
-    public static List<ThingObject> makeThing()
+    public static List<ExposedWebThing> makeThing()
             throws URISyntaxException, WoTException {
-        final List<ThingObject> ret = new ArrayList<>();
-        final ThingData td = new ThingData();
+        final List<ExposedWebThing> ret = new ArrayList<>();
+        final ExposeThingInit td = new ExposeThingInit();
         addProperty("name",
                     "The real name",
                     "/single/name",
@@ -100,7 +96,7 @@ public class ThingServerIT {
         sc.setDefaultDescription("Basic Security");
         td.addSecurityDefinition("basic_sc", sc);
 
-        final ThingObject to = new ThingObject(td);
+        final ExposedWebThing to = new ExposedWebThing(td);
         to.addAction(new ToggleAction("toggle",
                                       aa_toggle,
                                       SyncActionHandler.class));
@@ -118,7 +114,7 @@ public class ThingServerIT {
         try {
             // If adding more than one thing, use MultipleThings() with a name.
             // In the single thing case, the thing's name will be broadcast.
-            final List<ThingObject> thing = makeThing();
+            final List<ExposedWebThing> thing = makeThing();
             final ThingServer server = new ThingServer(thing, 8888);
 
             Runtime.getRuntime().addShutdownHook(new Thread(server::stop));
@@ -201,7 +197,7 @@ public class ThingServerIT {
         try {
             // If adding more than one thing, use MultipleThings() with a name.
             // In the single thing case, the thing's name will be broadcast.
-            final List<ThingObject> thing = makeThing();
+            final List<ExposedWebThing> thing = makeThing();
             final ThingServer server = new ThingServer(thing, 8888);
 
             Runtime.getRuntime().addShutdownHook(new Thread(server::stop));

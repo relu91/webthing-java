@@ -6,7 +6,7 @@ package io.webthings.webthing.server;
 import fi.iki.elonen.NanoHTTPD;
 import fi.iki.elonen.router.RouterNanoHTTPD;
 import io.webthings.webthing.Utils;
-import io.webthings.webthing.common.ThingData;
+import io.webthings.webthing.common.ExposeThingInit;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.util.ArrayList;
@@ -24,7 +24,7 @@ public class ThingServer extends RouterNanoHTTPD {
     private static final int SOCKET_READ_TIMEOUT = 30 * 1000;
     private static final int WEBSOCKET_PING_INTERVAL = 20 * 1000;
     private final int port;
-    private final List<ThingObject> things;
+    private final List<ExposedWebThing> things;
     private String hostname;
     private final boolean disableHostValidation;
     private final List<String> hosts;
@@ -38,7 +38,7 @@ public class ThingServer extends RouterNanoHTTPD {
      * @throws IOException          If server fails to bind.
      * @throws NullPointerException If something bad happened.
      */
-    public ThingServer(List<ThingObject> things) throws IOException, NullPointerException {
+    public ThingServer(List<ExposedWebThing> things) throws IOException, NullPointerException {
         this(things, 80, null, null,  false);
     }
 
@@ -50,7 +50,7 @@ public class ThingServer extends RouterNanoHTTPD {
      * @throws IOException          If server fails to bind.
      * @throws NullPointerException If something bad happened.
      */
-    public ThingServer(List<ThingObject> things, int port)  throws IOException, NullPointerException {
+    public ThingServer(List<ExposedWebThing> things, int port)  throws IOException, NullPointerException {
         this(things, port, null, null, false);
     }
 
@@ -63,7 +63,7 @@ public class ThingServer extends RouterNanoHTTPD {
      * @throws IOException          If server fails to bind.
      * @throws NullPointerException If something bad happened.
      */
-    public ThingServer(List<ThingObject> things, int port, String hostname) throws IOException, NullPointerException {
+    public ThingServer(List<ExposedWebThing> things, int port, String hostname) throws IOException, NullPointerException {
         this(things, port, hostname, null, false);
     }
 
@@ -78,7 +78,7 @@ public class ThingServer extends RouterNanoHTTPD {
      * @throws NullPointerException If something bad happened.
      */
     public ThingServer(
-        List<ThingObject>   things,
+        List<ExposedWebThing>   things,
         int                 port,
         String              hostname,
         SSLOptions          sslOptions
@@ -104,7 +104,7 @@ public class ThingServer extends RouterNanoHTTPD {
     
 
     public ThingServer(
-        List<ThingObject> things,
+        List<ExposedWebThing> things,
         int port,
         String hostname,
         SSLOptions sslOptions,
@@ -141,8 +141,8 @@ public class ThingServer extends RouterNanoHTTPD {
         //load all thing data
         final ManagedThingsCollection mti = ManagedThingsCollection.getInstance();
 
-        for(final ThingObject to : this.things) {
-            final ThingData td = to.getData();
+        for(final ExposedWebThing to : this.things) {
+            final ExposeThingInit td = to.getData();
             mti.add(to);
              
             

@@ -5,15 +5,14 @@ import io.webthings.webthing.affordances.ActionAffordance;
 import io.webthings.webthing.affordances.EventAffordance;
 import io.webthings.webthing.affordances.PropertyAffordance;
 import io.webthings.webthing.common.SecurityScheme;
-import io.webthings.webthing.common.ThingData;
+import io.webthings.webthing.common.ExposeThingInit;
 import io.webthings.webthing.exceptions.WoTException;
 import io.webthings.webthing.forms.Form;
 import io.webthings.webthing.forms.Operation;
 import io.webthings.webthing.server.Action;
-import io.webthings.webthing.server.ActionHandler;
 import io.webthings.webthing.server.Event;
 import io.webthings.webthing.server.SyncActionHandler;
-import io.webthings.webthing.server.ThingObject;
+import io.webthings.webthing.server.ExposedWebThing;
 import io.webthings.webthing.server.ThingServer;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -59,7 +58,8 @@ public class SingleThing {
 
     }
     
-    private static void addProperty(String title,String desc, String href, Operation.id op,ThingData tgt)throws URISyntaxException,WoTException {
+    private static void addProperty(String title, String desc, String href, Operation.id op,
+                                    ExposeThingInit tgt)throws URISyntaxException,WoTException {
         final PropertyAffordance pa  = new PropertyAffordance();
         pa.setDefaultTitle(title);
         pa.setDefaultDescription(desc);
@@ -73,7 +73,8 @@ public class SingleThing {
         tgt.addProperty("name", pa);
         
     }
-    private static void addMetadataForm(String href, Operation.id op,ThingData tgt)throws URISyntaxException,WoTException {
+    private static void addMetadataForm(String href, Operation.id op,
+                                        ExposeThingInit tgt)throws URISyntaxException,WoTException {
         final Form f = new Form(href);
        
         if (op != null)
@@ -84,9 +85,9 @@ public class SingleThing {
         
     }
     
-    public static List<ThingObject> makeThing() throws URISyntaxException,WoTException{
-        final List<ThingObject> ret = new ArrayList<>();
-        final ThingData   td = new ThingData();
+    public static List<ExposedWebThing> makeThing() throws URISyntaxException,WoTException{
+        final List<ExposedWebThing> ret = new ArrayList<>();
+        final ExposeThingInit td = new ExposeThingInit();
         addProperty("name","The real name","/single/name",Operation.id.readproperty,td);
         addMetadataForm("/single/allprops",Operation.id.readallproperties,td);
         
@@ -111,7 +112,7 @@ public class SingleThing {
         sc.setDefaultDescription("Basic Security");
         td.addSecurityDefinition("basic_sc", sc);
         
-        final ThingObject to = new ThingObject(td);
+        final ExposedWebThing to = new ExposedWebThing(td);
         to.addAction(new ToggleAction("toggle",aa_toggle,SyncActionHandler.class));
         to.addEvent(new ToggleEvent("toggled",ee_onoff));
         
@@ -126,7 +127,7 @@ public class SingleThing {
         try {
             // If adding more than one thing, use MultipleThings() with a name.
             // In the single thing case, the thing's name will be broadcast.
-            final List<ThingObject> thing = makeThing();
+            final List<ExposedWebThing> thing = makeThing();
             final ThingServer server = new ThingServer(thing, 8888);
 
             Runtime.getRuntime().addShutdownHook(new Thread(server::stop));

@@ -1,7 +1,7 @@
 package io.webthings.webthing.server;
 
 import io.webthings.webthing.affordances.InteractionAffordance;
-import io.webthings.webthing.common.ThingData;
+import io.webthings.webthing.common.ExposeThingInit;
 import io.webthings.webthing.forms.Form;
 
 import java.util.Map;
@@ -41,9 +41,9 @@ public class ManagedThingsCollection {
     private class InteractionData {
         public final InteractionAffordance Affordance;
         public final String Name;
-        public final ThingObject Owner;
+        public final ExposedWebThing Owner;
 
-        public InteractionData(ThingObject to,
+        public InteractionData(ExposedWebThing to,
                                InteractionAffordance ia,
                                String n) {
             Affordance = ia;
@@ -54,16 +54,16 @@ public class ManagedThingsCollection {
 
     private class FormData {
         public final Form FormData;
-        public final ThingObject Owner;
+        public final ExposedWebThing Owner;
 
-        public FormData(Form f, ThingObject o) {
+        public FormData(Form f, ExposedWebThing o) {
             FormData = f;
             Owner = o;
         }
     }
 
-    public void add(ThingObject to) {
-        final ThingData td = to.getData();
+    public void add(ExposedWebThing to) {
+        final ExposeThingInit td = to.getData();
 
         final java.net.URI baseURI = td.getBase();
         String sBaseURI = "";
@@ -113,8 +113,8 @@ public class ManagedThingsCollection {
         return ret;
     }
 
-    public ThingObject getRootFormOwner(String url) {
-        ThingObject ret = null;
+    public ExposedWebThing getRootFormOwner(String url) {
+        ExposedWebThing ret = null;
         final FormData id = registeredRootForms.get(url);
         if (id != null) {
             ret = id.Owner;
@@ -142,8 +142,8 @@ public class ManagedThingsCollection {
         return ret;
     }
 
-    public ThingObject getInteractionOwner(String url) {
-        ThingObject ret = null;
+    public ExposedWebThing getInteractionOwner(String url) {
+        ExposedWebThing ret = null;
         final InteractionData id = registeredUrls.get(url);
         if (id != null) {
             ret = id.Owner;
@@ -153,12 +153,12 @@ public class ManagedThingsCollection {
     }
 
     private interface HandlerGetter {
-        public Class getHandler(ThingObject to, String name);
+        public Class getHandler(ExposedWebThing to, String name);
     }
 
     private class PropertyHandlerGetter implements HandlerGetter {
         @Override
-        public Class getHandler(ThingObject to, String name) {
+        public Class getHandler(ExposedWebThing to, String name) {
             final Property p = to.getProperty(name);
             return p.getHandler();
         }
@@ -166,7 +166,7 @@ public class ManagedThingsCollection {
 
     private class ActionHandlerGetter implements HandlerGetter {
         @Override
-        public Class getHandler(ThingObject to, String name) {
+        public Class getHandler(ExposedWebThing to, String name) {
             final Action a = to.getAction(name);
             return a.getHandler();
         }
@@ -174,7 +174,7 @@ public class ManagedThingsCollection {
 
     private class EventHandlerGetter implements HandlerGetter {
         @Override
-        public Class getHandler(ThingObject to, String name) {
+        public Class getHandler(ExposedWebThing to, String name) {
             final Event a = to.getEvent(name);
             return a.getHandler();
         }
@@ -197,7 +197,7 @@ public class ManagedThingsCollection {
 
     private <__T extends InteractionAffordance, __GETTER extends HandlerGetter> void loadMap(
             __GETTER g,
-            ThingObject to,
+            ExposedWebThing to,
             Map<String, __T> m,
             String base,
             Map<String, Class> storedURLs) {

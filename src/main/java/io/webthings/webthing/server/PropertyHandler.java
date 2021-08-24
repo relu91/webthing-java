@@ -138,7 +138,7 @@ public class PropertyHandler extends BaseHandler {
         final String path = "/" + uriResource.getUri();
         final InteractionAffordance ia = mti.getInteraction(path);
         final String iName = mti.getInteractionName(path);
-        final ThingObject owner = mti.getInteractionOwner(path);
+        final ExposedWebThing owner = mti.getInteractionOwner(path);
 
 
         if (ia == null || iName == null || owner == null) {
@@ -249,7 +249,7 @@ public class PropertyHandler extends BaseHandler {
         final String path = "/" + uriResource.getUri();
         final InteractionAffordance ia = mti.getInteraction(path);
         final String iName = mti.getInteractionName(path);
-        final ThingObject owner = mti.getInteractionOwner(path);
+        final ExposedWebThing owner = mti.getInteractionOwner(path);
 
         JSONObject obj = new JSONObject();
 
@@ -295,7 +295,7 @@ public class PropertyHandler extends BaseHandler {
         final String path = "/" + uriResource.getUri();
         final InteractionAffordance ia = mti.getInteraction(path);
         final String iName = mti.getInteractionName(path);
-        final ThingObject owner = mti.getInteractionOwner(path);
+        final ExposedWebThing owner = mti.getInteractionOwner(path);
 
         JSONObject json = this.parseBody(session);
         if (json == null) {

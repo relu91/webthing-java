@@ -18,7 +18,7 @@ import org.json.JSONObject;
  */
 public abstract class ActionHandler extends BaseHandler {
     protected JSONObject requestBody = null;
-    protected ThingObject owner;
+    protected ExposedWebThing owner;
 
     @Override
     public NanoHTTPD.Response get(RouterNanoHTTPD.UriResource uriResource,
@@ -58,7 +58,7 @@ public abstract class ActionHandler extends BaseHandler {
         final String path = "/" + uriResource.getUri();
         final InteractionAffordance ia = mti.getInteraction(path);
         final String iName = mti.getInteractionName(path);
-        final ThingObject owner = mti.getInteractionOwner(path);
+        final ExposedWebThing owner = mti.getInteractionOwner(path);
         this.owner = owner;
 
 

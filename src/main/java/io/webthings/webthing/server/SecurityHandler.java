@@ -2,7 +2,7 @@ package io.webthings.webthing.server;
 
 import fi.iki.elonen.NanoHTTPD;
 import io.webthings.webthing.common.SecurityScheme;
-import io.webthings.webthing.common.ThingData;
+import io.webthings.webthing.common.ExposeThingInit;
 import io.webthings.webthing.exceptions.WoTException;
 import io.webthings.webthing.server.securityHandlers.exceptions.InvalidSecurityException;
 import io.webthings.webthing.forms.Form;
@@ -22,7 +22,7 @@ public abstract class SecurityHandler {
                                             NanoHTTPD.IHTTPSession session)
             throws WoTException;
 
-    public static boolean checkAccess(ThingData td,
+    public static boolean checkAccess(ExposeThingInit td,
                                       Form f,
                                       NanoHTTPD.IHTTPSession session)
             throws WoTException {
@@ -51,7 +51,7 @@ public abstract class SecurityHandler {
         }
     }
 
-    private static SecurityHandler newInstance(String name, ThingData td)
+    private static SecurityHandler newInstance(String name, ExposeThingInit td)
             throws InvalidSecurityException {
         //check 
         final Map<String, SecurityScheme> secMap = td.getSecurityDefinitions();

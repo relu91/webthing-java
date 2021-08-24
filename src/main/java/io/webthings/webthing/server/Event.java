@@ -16,13 +16,13 @@ public abstract class Event implements IObservable, INotifiable {
     protected String name;
     protected Class handler;
     protected List<NanoWSD.WebSocket> subscribers = new ArrayList<>();
-    private ThingObject owner;
+    private ExposedWebThing owner;
 
-    public ThingObject getOwner() {
+    public ExposedWebThing getOwner() {
         return owner;
     }
 
-    public void setOwner(ThingObject o) {
+    public void setOwner(ExposedWebThing o) {
         owner = o;
     }
 

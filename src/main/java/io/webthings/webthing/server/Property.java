@@ -17,13 +17,13 @@ public class Property implements IObservable {
     private String name;
     private Class handler;
     private List<NanoWSD.WebSocket> subscribers = new ArrayList<>();
-    private ThingObject owner;
+    private ExposedWebThing owner;
 
-    public ThingObject getOwner() {
+    public ExposedWebThing getOwner() {
         return owner;
     }
 
-    public void setOwner(ThingObject o) {
+    public void setOwner(ExposedWebThing o) {
         owner = o;
     }
 

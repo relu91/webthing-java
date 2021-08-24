@@ -28,7 +28,7 @@ public class ThingWebSocket extends NanoWSD.WebSocket {
         if (mti == null) {
             return null;
         }
-        final ThingObject to = mti.getInteractionOwner(path);
+        final ExposedWebThing to = mti.getInteractionOwner(path);
         if (to == null) {
             return null;
         }

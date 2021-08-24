@@ -2,7 +2,6 @@ package io.webthings.webthing.server;
 
 import fi.iki.elonen.NanoHTTPD;
 import fi.iki.elonen.router.RouterNanoHTTPD;
-import io.webthings.webthing.affordances.InteractionAffordance;
 import io.webthings.webthing.forms.Form;
 import io.webthings.webthing.forms.Operation;
 
@@ -74,7 +73,7 @@ public class FormMetadataHandler extends BaseHandler {
                 ManagedThingsCollection.getInstance();
         final String path = "/" + uriResource.getUri();
         final Form fd = mti.getRootForm(path);
-        final ThingObject owner = mti.getRootFormOwner(path);
+        final ExposedWebThing owner = mti.getRootFormOwner(path);
 
 
         if (fd == null || owner == null) {

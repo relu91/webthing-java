@@ -19,9 +19,13 @@ import java.util.TreeSet;
 import org.json.JSONObject;
 
 /**
+ * A Partial Thing Description used as an intialization vocabulary
+ * for an ExposedWebThing.
+ *
+ * @see io.webthings.webthing.server.ExposedWebThing
  * @author Lorenzo
  */
-public class ThingData extends JSONEntity {
+public class ExposeThingInit extends JSONEntity {
     private List<java.net.URI> contexts;
     private List<String> types;
     private java.net.URI id;
